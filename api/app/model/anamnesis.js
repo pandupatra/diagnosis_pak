@@ -9,7 +9,11 @@ const anamnesisSchema = mongoose.Schema({
   tingkat_pernapasan: String,
   abdomen: String,
   tekanan_darah: String,
-  pemeriksaan_penunjang: String
+  pemeriksaan_penunjang: String,
+  gejala_tetanus: Object,
+  gejala_tuberkulosis: Object,
+  gejala_hepatitis_a: Object,
+  gejala_hepatitis_c: Object
 })
 
 module.exports = mongoose.model("Anamnesis", anamnesisSchema)

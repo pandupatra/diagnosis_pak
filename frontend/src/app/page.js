@@ -11,7 +11,7 @@ export default function Home() {
   const value = { activePasien, setActivePasien }
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="max-w-screen-sm w-full">
+      <div className="w-full">
         <PasienContext.Provider value={value}>
           <FormStepper />
         </PasienContext.Provider>

@@ -1,3 +1,4 @@
+const { mongoose } = require('mongoose')
 const Anamnesis = require('../model/anamnesis')
 
 module.exports = {
@@ -8,12 +9,12 @@ module.exports = {
 
     try {
       let anamnesis = await Anamnesis.findOneAndUpdate({
-        _id: _id
+        _id: _id ?? new mongoose.Types.ObjectId()
       },
       {
         $set: anamnesisBody
-      }
-      ,{
+      },
+      {
         new: true
       })
       console.log(anamnesis)

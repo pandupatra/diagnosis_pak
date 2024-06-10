@@ -1,6 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { Button } from '@mui/material';
-import { useMemo } from 'react';
+import { Button, Divider } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import ChainForm from './ChainForm';
+
+const API_ENDPOINT = 'http://localhost:3003'
 
 const initValues = (anamnesis) => {
   return {
@@ -12,13 +16,140 @@ const initValues = (anamnesis) => {
   }
 }
 
-export default function AnamnesisForm({ activeGejala, activeAnamnesis, onSubmit }) {
+export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onSubmit }) {
+  const [isGejalaSubmitted, setIsGejalaSubmitted] = useState(false)
+
+  const onChainSubmit = async (values) => {
+    const categorizedGejala = {};
+    const categorizedWeights = {};
+
+    questions.forEach((question, index) => {
+      if (values[`question_${index}`] === 'yes') {
+        if (!categorizedWeights[question.type]) {
+          categorizedWeights[question.type] = 0;
+        }
+        categorizedWeights[question.type] += question.weight;
+
+        if (!categorizedGejala[question.type]) {
+          categorizedGejala[question.type] = []
+        }
+        categorizedGejala[question.type].push(question.gejala)
+
+        if (question.follow_up) {
+          question.follow_up.forEach((fu, fuIndex) => {
+            if (values[`question_${index}_follow_up_${fuIndex}`] === 'yes') {
+              if (!categorizedWeights[question.type]) {
+                categorizedWeights[question.type] = 0;
+              }
+              categorizedWeights[question.type] += question.follow_up[fuIndex].weight;
+
+              if (!categorizedGejala[question.type]) {
+                categorizedGejala[question.type] = []
+              }
+              categorizedGejala[question.type].push(question.follow_up[fuIndex].gejala);
+            }
+          })
+        }
+      }
+    });
+
+    try {
+      let endpoint;
+      if (activeAnamnesis) {
+        anamnesis = {
+          _id: activeAnamnesis._id,
+          ...anamnesis
+        }
+        endpoint = `${API_ENDPOINT}/anamnesis/update`
+      } else {
+        endpoint = `${API_ENDPOINT}/anamnesis/create`
+      }
+      const response = await axios.post(endpoint, {
+        pasien: activePasien._id,
+        gejala_tetanus: {
+          gejala: categorizedGejala.tetanus,
+          weight: categorizedWeights.tetanus,
+        },
+        gejala_tuberkulosis: {
+          gejala: categorizedGejala.tuberkulosis,
+          weight: categorizedWeights.tuberkulosis,
+        },
+        gejala_hepatitis_a: {
+          gejala: categorizedGejala.hepatitis_a,
+          weight: categorizedWeights.hepatitis_a,
+        },
+        gejala_hepatitis_c: {
+          gejala: categorizedGejala.hepatitis_c,
+          weight: categorizedWeights.hepatitis_c
+        },
+      });
+      console.log('Response:', response.data);
+      setIsGejalaSubmitted(true)
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+
+  };
 
   const initialValues = useMemo(
     () => initValues(activeAnamnesis),
     [activeAnamnesis]
   )
+
+  useEffect(() => {
+    setIsGejalaSubmitted(activeAnamnesis?.gejala_hepatitis_a && activeAnamnesis?.gejala_hepatitis_c && activeAnamnesis?.gejala_tetanus && activeAnamnesis?.gejala_tuberkulosis ? true : false)
+  }, [activeAnamnesis])
+  
   return (
+    <>
+    {isGejalaSubmitted ?
+    <>
+    <div className='mb-8'>
+      <div className='mb-2'>
+        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Tetanus: </label>
+        <ul className='list-disc my-3 ml-5'>
+          {activeAnamnesis.gejala_tetanus.gejala.map((gejala, index) => (
+            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
+          ))}
+        </ul>
+        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_tetanus.weight}</span>
+        <Divider />
+      </div>
+      
+      <div className='mb-2'>
+        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Tuberkulosis: </label>
+        <ul className='list-disc my-3 ml-5'>
+          {activeAnamnesis.gejala_tuberkulosis.gejala.map((gejala, index) => (
+            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
+          ))}
+        </ul>
+        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_tuberkulosis.weight}</span>
+        <Divider />
+      </div>
+
+      <div className='mb-2'>
+        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Hepatitis A: </label>
+        <ul className='list-disc my-3 ml-5'>
+          {activeAnamnesis.gejala_hepatitis_a.gejala.map((gejala, index) => (
+            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
+          ))}
+        </ul>
+        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_hepatitis_a.weight}</span>
+        <Divider />
+      </div>
+
+      <div className='mb-2'>
+        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Hepatitis C: </label>
+        <ul className='list-disc my-3 ml-5'>
+          {activeAnamnesis.gejala_hepatitis_c.gejala.map((gejala, index) => (
+            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
+          ))}
+        </ul>
+        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_hepatitis_c.weight}</span>
+        <Divider />
+      </div>
+      <Button variant="contained" onClick={() => setIsGejalaSubmitted(false)}>Input ulang gejala</Button>
+    </div>
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
@@ -33,12 +164,7 @@ export default function AnamnesisForm({ activeGejala, activeAnamnesis, onSubmit 
             <ErrorMessage className='block text-sm font-medium text-red-600' name="pemeriksaan_fisik" component="div" />
           </div>
 
-          <div>
-            <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Tetanus: {activeGejala.gejala_tetanus} </label>
-            <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Tuberkulosis: {activeGejala.gejala_tuberkulosis} </label>
-            <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Hepatitis A: {activeGejala.gejala_hepatitis_a} </label>
-            <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Hepatitis C: {activeGejala.gejala_hepatitis_c} </label>
-          </div>
+          
 
           <div>
             <label htmlFor="tingkat_pernapasan" className='block text-sm font-medium leading-6 text-gray-900'>Tingkat Pernapasan</label>
@@ -76,5 +202,10 @@ export default function AnamnesisForm({ activeGejala, activeAnamnesis, onSubmit 
         </Form>
       )}
     </Formik>
+    </>
+    :
+      <ChainForm anamnesis={activeAnamnesis} onSubmit={onChainSubmit} />
+    }
+    </>
   )
 }

@@ -48,7 +48,7 @@ const validationSchema = Yup.object(
   }, {})
 );
 
-export default function ChainForm ({ activeGejala, onSubmit }) {
+export default function ChainForm ({ anamnesis, onSubmit }) {
   const [activeStep, setActiveStep] = useState(0)
 
   const handleNext = () => {
