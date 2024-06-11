@@ -125,7 +125,15 @@ const PasienForm = ({ activePasien, onSubmit }) => {
           <div>
             <label htmlFor="agama" className='block w-full text-sm font-medium leading-6 text-gray-900'>Agama</label>
             <div className="mt-2">
-              <Field type="text" id="agama" name="agama" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <Field as="select" id="agama" name="agama" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                <option value="Islam">Islam</option>
+                <option value="Kristen Protestan">Kristen Protestan</option>
+                <option value="Kristen Katolik">Kristen Katolik</option>
+                <option value="Hindu">Hindu</option>
+                <option value="Buddha">Buddha</option>
+                <option value="Konghucu">Konghucu</option>
+                <option value="Lainnya">Lainnya</option>
+              </Field>
             </div>
             <ErrorMessage className='block text-sm font-medium text-red-600' name="agama" component="div" />
           </div>

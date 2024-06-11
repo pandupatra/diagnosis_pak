@@ -3,6 +3,7 @@ import { Button, Divider } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import ChainForm from './ChainForm';
+import { questions } from '@/data/questions';
 
 const API_ENDPOINT = 'http://localhost:3003'
 
@@ -16,7 +17,7 @@ const initValues = (anamnesis) => {
   }
 }
 
-export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onSubmit }) {
+export default function AnamnesisForm({ activePasien, activeAnamnesis, setActiveAnamnesis, onSubmit }) {
   const [isGejalaSubmitted, setIsGejalaSubmitted] = useState(false)
 
   const onChainSubmit = async (values) => {
@@ -25,28 +26,59 @@ export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onS
 
     questions.forEach((question, index) => {
       if (values[`question_${index}`] === 'yes') {
-        if (!categorizedWeights[question.type]) {
-          categorizedWeights[question.type] = 0;
-        }
-        categorizedWeights[question.type] += question.weight;
+        // If question used on more than one type
+        if (Array.isArray(question.type)) {
+          question.type.forEach((type, tIndex) => {
+            if (!categorizedWeights[type]) {
+              categorizedWeights[type] = 0
+            }
+            categorizedWeights[type] += question.weight[tIndex]
 
-        if (!categorizedGejala[question.type]) {
-          categorizedGejala[question.type] = []
+            if (!categorizedGejala[type]) {
+              categorizedGejala[type] = []
+            }
+            categorizedGejala[type].push(question.symptom)
+          })
+        } else {
+          if (!categorizedWeights[question.type]) {
+            categorizedWeights[question.type] = 0;
+          }
+          categorizedWeights[question.type] += question.weight;
+  
+          if (!categorizedGejala[question.type]) {
+            categorizedGejala[question.type] = []
+          }
+          categorizedGejala[question.type].push(question.symptom)
         }
-        categorizedGejala[question.type].push(question.gejala)
+        
 
         if (question.follow_up) {
           question.follow_up.forEach((fu, fuIndex) => {
             if (values[`question_${index}_follow_up_${fuIndex}`] === 'yes') {
-              if (!categorizedWeights[question.type]) {
-                categorizedWeights[question.type] = 0;
-              }
-              categorizedWeights[question.type] += question.follow_up[fuIndex].weight;
+              if (Array.isArray(fu.type)) {
+                fu.type.forEach((type, tIndex) => {
+                  if (!categorizedWeights[type]) {
+                    categorizedWeights[type] = 0
+                  }
+                  categorizedWeights[type] += question.follow_up[fuIndex].weight[tIndex]
 
-              if (!categorizedGejala[question.type]) {
-                categorizedGejala[question.type] = []
+                  if (!categorizedGejala[type]) {
+                    categorizedGejala[type] = []
+                  }
+                  categorizedGejala[type].push(question.follow_up[fuIndex].symptom);
+                })
+              } else {
+                if (!categorizedWeights[fu.type]) {
+                  categorizedWeights[fu.type] = 0;
+                }
+                categorizedWeights[fu.type] += question.follow_up[fuIndex].weight;
+  
+                if (!categorizedGejala[fu.type]) {
+                  categorizedGejala[fu.type] = []
+                }
+                categorizedGejala[fu.type].push(question.follow_up[fuIndex].symptom);
               }
-              categorizedGejala[question.type].push(question.follow_up[fuIndex].gejala);
+              
             }
           })
         }
@@ -56,9 +88,9 @@ export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onS
     try {
       let endpoint;
       if (activeAnamnesis) {
-        anamnesis = {
+        let anamnesis = {
           _id: activeAnamnesis._id,
-          ...anamnesis
+          ...activeAnamnesis
         }
         endpoint = `${API_ENDPOINT}/anamnesis/update`
       } else {
@@ -67,24 +99,24 @@ export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onS
       const response = await axios.post(endpoint, {
         pasien: activePasien._id,
         gejala_tetanus: {
-          gejala: categorizedGejala.tetanus,
+          symptom: categorizedGejala.tetanus,
           weight: categorizedWeights.tetanus,
         },
         gejala_tuberkulosis: {
-          gejala: categorizedGejala.tuberkulosis,
+          symptom: categorizedGejala.tuberkulosis,
           weight: categorizedWeights.tuberkulosis,
         },
-        gejala_hepatitis_a: {
-          gejala: categorizedGejala.hepatitis_a,
-          weight: categorizedWeights.hepatitis_a,
-        },
-        gejala_hepatitis_c: {
-          gejala: categorizedGejala.hepatitis_c,
-          weight: categorizedWeights.hepatitis_c
-        },
-      });
-      console.log('Response:', response.data);
-      setIsGejalaSubmitted(true)
+        gejala_hepatitis: {
+          symptom: categorizedGejala.hepatitis,
+          weight: categorizedWeights.hepatitis,
+        }
+      }).then((data) => {
+        console.log(data)
+        setActiveAnamnesis(data.data)
+        setIsGejalaSubmitted(true)
+      })
+      return response.data
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -96,60 +128,49 @@ export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onS
     [activeAnamnesis]
   )
 
+  const symptomWithMaxWeight = useMemo(
+    () => {
+      let labelGejala;
+      let objectWithMaxWeight;
+      let maxWeight = Math.max(activeAnamnesis?.gejala_tuberkulosis.weight, activeAnamnesis?.gejala_hepatitis.weight, activeAnamnesis?.gejala_tetanus.weight);
+      if (maxWeight === activeAnamnesis?.gejala_tuberkulosis.weight) {
+        objectWithMaxWeight = activeAnamnesis?.gejala_tuberkulosis;
+        labelGejala = "tuberkulosis"
+      } else if (maxWeight === activeAnamnesis?.gejala_tetanus.weight) {
+        objectWithMaxWeight = activeAnamnesis?.gejala_tetanus;
+        labelGejala = "tetanus"
+      } else {
+        objectWithMaxWeight = activeAnamnesis?.gejala_hepatitis;
+        labelGejala = "hepatitis"
+      }
+      return { labelGejala, ...objectWithMaxWeight }
+    },
+    [activeAnamnesis]
+  )
+
   useEffect(() => {
-    setIsGejalaSubmitted(activeAnamnesis?.gejala_hepatitis_a && activeAnamnesis?.gejala_hepatitis_c && activeAnamnesis?.gejala_tetanus && activeAnamnesis?.gejala_tuberkulosis ? true : false)
+    setIsGejalaSubmitted(activeAnamnesis?.gejala_hepatitis && activeAnamnesis?.gejala_tetanus && activeAnamnesis?.gejala_tuberkulosis ? true : false)
   }, [activeAnamnesis])
   
   return (
     <>
     {isGejalaSubmitted ?
     <>
-    <div className='mb-8'>
-      <div className='mb-2'>
-        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Tetanus: </label>
-        <ul className='list-disc my-3 ml-5'>
-          {activeAnamnesis.gejala_tetanus.gejala.map((gejala, index) => (
-            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
-          ))}
-        </ul>
-        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_tetanus.weight}</span>
-        <Divider />
+    {console.log(symptomWithMaxWeight)}
+    {activeAnamnesis && (
+      <div className='mb-8'>
+        <div className='mb-2'>
+          <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala {symptomWithMaxWeight.labelGejala}: </label>
+          <ul className='list-disc my-3 ml-5'>
+            {symptomWithMaxWeight.symptom.map((gejala, index) => (
+              <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
+            ))}
+          </ul>
+          {/* <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {symptomWithMaxWeight.weight}</span> */}
+          <Divider />
+        </div>
       </div>
-      
-      <div className='mb-2'>
-        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Tuberkulosis: </label>
-        <ul className='list-disc my-3 ml-5'>
-          {activeAnamnesis.gejala_tuberkulosis.gejala.map((gejala, index) => (
-            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
-          ))}
-        </ul>
-        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_tuberkulosis.weight}</span>
-        <Divider />
-      </div>
-
-      <div className='mb-2'>
-        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Hepatitis A: </label>
-        <ul className='list-disc my-3 ml-5'>
-          {activeAnamnesis.gejala_hepatitis_a.gejala.map((gejala, index) => (
-            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
-          ))}
-        </ul>
-        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_hepatitis_a.weight}</span>
-        <Divider />
-      </div>
-
-      <div className='mb-2'>
-        <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala Hepatitis C: </label>
-        <ul className='list-disc my-3 ml-5'>
-          {activeAnamnesis.gejala_hepatitis_c.gejala.map((gejala, index) => (
-            <li key={index} className='text-sm leading-6 text-gray-900'>{gejala}</li>
-          ))}
-        </ul>
-        <span className='block text-sm font-medium leading-6 text-gray-900'>Bobot: {activeAnamnesis.gejala_hepatitis_c.weight}</span>
-        <Divider />
-      </div>
-      <Button variant="contained" onClick={() => setIsGejalaSubmitted(false)}>Input ulang gejala</Button>
-    </div>
+    )}
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
@@ -163,8 +184,6 @@ export default function AnamnesisForm({ activeAnamnesis, setActiveAnamnesis, onS
             </div>
             <ErrorMessage className='block text-sm font-medium text-red-600' name="pemeriksaan_fisik" component="div" />
           </div>
-
-          
 
           <div>
             <label htmlFor="tingkat_pernapasan" className='block text-sm font-medium leading-6 text-gray-900'>Tingkat Pernapasan</label>

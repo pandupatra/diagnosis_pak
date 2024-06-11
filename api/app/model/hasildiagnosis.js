@@ -6,6 +6,7 @@ const hasildiagnosisSchema = mongoose.Schema({
     ref: "Pasien"
   },
   kesimpulan: String,
+  hasil_diagnosis_pak: String,
   rekomendasi: String,
   evaluasi: String
 })

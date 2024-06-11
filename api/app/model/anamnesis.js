@@ -12,8 +12,7 @@ const anamnesisSchema = mongoose.Schema({
   pemeriksaan_penunjang: String,
   gejala_tetanus: Object,
   gejala_tuberkulosis: Object,
-  gejala_hepatitis_a: Object,
-  gejala_hepatitis_c: Object
+  gejala_hepatitis: Object,
 })
 
 module.exports = mongoose.model("Anamnesis", anamnesisSchema)

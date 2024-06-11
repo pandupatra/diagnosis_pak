@@ -123,21 +123,23 @@ export default function ChainForm ({ anamnesis, onSubmit }) {
                 <Button disabled={activeStep == 0} variant="contained" type="button" onClick={handleBack}>
                   Back
                 </Button>
-                <Button 
-                  disabled={!values[`question_${index}`]} 
-                  variant="contained" 
-                  type="button" 
-                  onClick={handleNext}
-                >
-                  Next
-                </Button>
+                {activeStep < maxSteps && (
+                  <Button 
+                    disabled={!values[`question_${index}`]} 
+                    variant="contained" 
+                    type="button" 
+                    onClick={handleNext}
+                  >
+                    Next
+                  </Button>
+                )}
               </div>
               </>
               
             )
           ))}
           {activeStep == maxSteps && (
-            <Button disabled={!areAllFieldsFilled(values)} variant="contained" type="Submit">Submit</Button>
+            <Button variant="contained" type="Submit">Submit</Button>
           )}
         </Form>
       )}

@@ -175,13 +175,9 @@ const FormStepper = () => {
           gejala: categorizedGejala.tuberkulosis,
           weight: categorizedWeights.tuberkulosis,
         },
-        gejala_hepatitis_a: {
-          gejala: categorizedGejala.hepatitis_a,
-          weight: categorizedWeights.hepatitis_a,
-        },
-        gejala_hepatitis_c: {
-          gejala: categorizedGejala.hepatitis_c,
-          weight: categorizedWeights.hepatitis_c
+        gejala_hepatitis: {
+          gejala: categorizedGejala.hepatitis,
+          weight: categorizedWeights.hepatitis,
         },
       });
       console.log('Response:', response.data);
@@ -397,6 +393,7 @@ const FormStepper = () => {
     const pajananPromise = await axios.get(`${API_ENDPOINT}/pajanan/${pasienId}`).catch(error => console.log(error))
     const faktorindividuPromise = await axios.get(`${API_ENDPOINT}/faktorindividu/${pasienId}`).catch(error => console.log(error))
     const pajananluarkerjaPromise = await axios.get(`${API_ENDPOINT}/pajananluarkerja/${pasienId}`).catch(error => console.log(error))
+    const hasilDiagnosisPromise = await axios.get(`${API_ENDPOINT}/hasildiagnosis/${pasienId}`).catch(error => console.log(error))
     
     await Promise.all([
       anamnesisPromise,
@@ -404,7 +401,8 @@ const FormStepper = () => {
       diagnosisPromise,
       pajananPromise,
       faktorindividuPromise,
-      pajananluarkerjaPromise
+      pajananluarkerjaPromise,
+      hasilDiagnosisPromise
     ]).then((values) => {
       setActiveAnamnesis(values[0].data)
       setActiveInputpajanan(values[1].data)
@@ -412,6 +410,7 @@ const FormStepper = () => {
       setActivePajanan(values[3].data)
       setActiveFaktorindividu(values[4].data)
       setActivePajananluarkerja(values[5].data)
+      setActiveHasildiagnosis(values[6].data)
     })
     .catch((error) => {
       console.log(error)
@@ -430,7 +429,7 @@ const FormStepper = () => {
         )
       case 2:
         return (
-          <AnamnesisForm activeAnamnesis={activeAnamnesis} setActiveAnamnesis={setActiveAnamnesis} onSubmit={onAnamnesisSubmit} />
+          <AnamnesisForm activePasien={activePasien} activeAnamnesis={activeAnamnesis} setActiveAnamnesis={setActiveAnamnesis} onSubmit={onAnamnesisSubmit} />
         )
       case 3:
         return (
@@ -454,7 +453,7 @@ const FormStepper = () => {
         )
       case 8:
         return (
-          <Hasildiagnosis activeHasildiagnosis={activeHasildiagnosis} onSubmit={onHasildiagnosisSubmit} />
+          <Hasildiagnosis activeAnamnesis={activeAnamnesis} activeHasildiagnosis={activeHasildiagnosis} onSubmit={onHasildiagnosisSubmit} />
         )
     }
   }
@@ -470,7 +469,7 @@ const FormStepper = () => {
       <Stepper nonLinear className="mb-8" activeStep={activeStep}>
         {steps.map((step, index) => (
           <Step key={step} completed={completed[index]}>
-            <StepButton onClick={handleStep(index)}>
+            <StepButton disabled={activeStep < 1} onClick={handleStep(index)}>
               {step}
             </StepButton>
           </Step>
