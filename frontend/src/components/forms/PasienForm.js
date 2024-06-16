@@ -1,9 +1,11 @@
 'use client'
 
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import moment from 'moment';
+import { observer } from 'mobx-react-lite';
 import { Button } from '@mui/material';
+import { StoreContext } from '@/store';
 
 const initValues = (pasien) => {
   return {
@@ -26,11 +28,10 @@ const initValues = (pasien) => {
 }
 
 const PasienForm = ({ activePasien, onSubmit }) => {
-  console.log(activePasien)
-
+  const store = useContext(StoreContext)
   const initialValues = useMemo(
-    () => initValues(activePasien),
-    [activePasien]
+    () => initValues(store.pasien.selected),
+    [store]
   )
 
   return (
@@ -175,4 +176,4 @@ const PasienForm = ({ activePasien, onSubmit }) => {
   );
 };
 
-export default PasienForm
+export default observer(PasienForm)

@@ -1,6 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from '@mui/material';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { StoreContext } from '@/store';
 
 const initValues = (faktorindividu) => {
   return {
@@ -12,6 +13,7 @@ const initValues = (faktorindividu) => {
 }
 
 export default function FaktorindividuForm({ activePasien, activeFaktorindividu, onSubmit }) {
+  const store = useContext(StoreContext)
 
   function getAge(dateString) {
     var today = new Date();
@@ -36,8 +38,8 @@ export default function FaktorindividuForm({ activePasien, activeFaktorindividu,
       {({ values }) => (
         <Form className='space-y-4 w-full'>
           <div>
-            <label className='block text-sm font-medium leading-6 text-gray-900'>Jenis kelamin: <span className='capitalize'>{activePasien.jenis_kelamin}</span></label>
-            <label className='block text-sm font-medium leading-6 text-gray-900'>Usia: {getAge(activePasien.tanggal_lahir)}</label>
+            <label className='block text-sm font-medium leading-6 text-gray-900'>Jenis kelamin: <span className='capitalize'>{store.pasien.selected.jenis_kelamin}</span></label>
+            <label className='block text-sm font-medium leading-6 text-gray-900'>Usia: {getAge(store.pasien.selected.tanggal_lahir)}</label>
           </div>
           <div>
             <label htmlFor="kebiasaan" className='block text-sm font-medium leading-6 text-gray-900'>Kebiasaan</label>

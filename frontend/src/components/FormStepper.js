@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useContext, useEffect, useState } from "react"
-import { Stepper, Step, StepContent, StepLabel, Box, StepButton } from "@mui/material"
+import { Stepper, Step, StepContent, StepLabel, Box, StepButton, Typography } from "@mui/material"
+import { card } from "@/styles/styles"
 import PasienForm from "./forms/PasienForm"
 import ChainForm from "./forms/ChainForm"
 import axios from "axios"
@@ -14,11 +15,13 @@ import PajananForm from "./forms/PajananForm"
 import FaktorindividuForm from "./forms/FaktorindividuForm"
 import PajananluarkerjaForm from "./forms/PajananluarkerjaForm"
 import Hasildiagnosis from "./forms/Hasildiagnosis"
+import { StoreContext } from "@/store"
+import { observer } from "mobx-react-lite"
+import useFillStore from "@/hooks/useFillStore"
 
-const API_ENDPOINT = 'http://localhost:3003'
+const API_ENDPOINT = process.env.NEXT_PUBLIC_GATEWAY_URL
 
 const steps = [
-  "Masukan NIK",
   "Data Pasien",
   "Anamnesis",
   "Input Pajanan",
@@ -30,17 +33,10 @@ const steps = [
 ]
 
 const FormStepper = () => {
+  const store = useContext(StoreContext)
+
   const [activeStep, setActiveStep] = useState(0)
   const [completed, setCompleted] = useState({});
-  const [activePasien, setActivePasien] = useState(null)
-  const [activeGejala, setActiveGejala] = useState(null)
-  const [activeAnamnesis, setActiveAnamnesis] = useState(null)
-  const [activeInputpajanan, setActiveInputpajanan] = useState(null)
-  const [activeDiagnosis, setActiveDiagnosis] = useState(null)
-  const [activePajanan, setActivePajanan] = useState(null)
-  const [activeFaktorindividu, setActiveFaktorindividu] = useState(null)
-  const [activePajananluarkerja, setActivePajananluarkerja] = useState(null)
-  const [activeHasildiagnosis, setActiveHasildiagnosis] = useState(null)
 
   const totalSteps = () => {
     return steps.length;
@@ -90,18 +86,18 @@ const FormStepper = () => {
 
   const onNikSubmit = async (nik) => {
     try {
-      const response = await axios.post(`${API_ENDPOINT}/pasien/signin`, nik)
-      if (response) {
-        setActivePasien(response.data)
-        setActiveStep((prevActiveStep) => prevActiveStep + 1)
+      const { status, data } = await store.pasien.signin(nik)
+      if (status == 200) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     } catch (error) {
       if (error.response.status == 404) {
         try {
-          const response = await axios.post(`${API_ENDPOINT}/pasien/create`, nik);
-          console.log('Response:', response.data);
-          setActivePasien(response.data)
-          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          // const response = await axios.post(`${API_ENDPOINT}/pasien/create`, nik);
+          const { status, data } = await store.pasien.signin(nik)
+          if (status == 200) {
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          }
         } catch (error) {
           console.error('Error submitting form:', error);
         }
@@ -120,368 +116,272 @@ const FormStepper = () => {
     }
   }
 
-  const onChainSubmit = async (values) => {
-    const categorizedGejala = {};
-    const categorizedWeights = {};
-
-    questions.forEach((question, index) => {
-      if (values[`question_${index}`] === 'yes') {
-        if (!categorizedWeights[question.type]) {
-          categorizedWeights[question.type] = 0;
-        }
-        categorizedWeights[question.type] += question.weight;
-
-        if (!categorizedGejala[question.type]) {
-          categorizedGejala[question.type] = []
-        }
-        categorizedGejala[question.type].push(question.gejala)
-
-        if (question.follow_up) {
-          question.follow_up.forEach((fu, fuIndex) => {
-            if (values[`question_${index}_follow_up_${fuIndex}`] === 'yes') {
-              if (!categorizedWeights[question.type]) {
-                categorizedWeights[question.type] = 0;
-              }
-              categorizedWeights[question.type] += question.follow_up[fuIndex].weight;
-
-              if (!categorizedGejala[question.type]) {
-                categorizedGejala[question.type] = []
-              }
-              categorizedGejala[question.type].push(question.follow_up[fuIndex].gejala);
-            }
-          })
-        }
-      }
-    });
-
-    try {
-      let endpoint;
-      if (activeAnamnesis) {
-        anamnesis = {
-          _id: activeAnamnesis._id,
-          ...anamnesis
-        }
-        endpoint = `${API_ENDPOINT}/anamnesis/update`
-      } else {
-        endpoint = `${API_ENDPOINT}/anamnesis/create`
-      }
-      const response = await axios.post(endpoint, {
-        pasien: activePasien._id,
-        gejala_tetanus: {
-          gejala: categorizedGejala.tetanus,
-          weight: categorizedWeights.tetanus,
-        },
-        gejala_tuberkulosis: {
-          gejala: categorizedGejala.tuberkulosis,
-          weight: categorizedWeights.tuberkulosis,
-        },
-        gejala_hepatitis: {
-          gejala: categorizedGejala.hepatitis,
-          weight: categorizedWeights.hepatitis,
-        },
-      });
-      console.log('Response:', response.data);
-      setActiveGejala(response.data)
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
-
-    alert(`Categorized Weights: ${JSON.stringify(categorizedWeights)}`);
-  };
-
   const onAnamnesisSubmit = useCallback(
     async (anamnesis) => {
       try {
-        let endpoint
-        if (activeAnamnesis) {
+        let response
+        if (store.anamnesis.selected) {
           anamnesis = {
-            _id: activeAnamnesis._id,
+            _id: store.anamnesis.selected._id,
             ...anamnesis
           }
-          endpoint = `${API_ENDPOINT}/anamnesis/update`
+          response = await store.anamnesis.update(anamnesis)
         } else {
-          endpoint = `${API_ENDPOINT}/anamnesis/create`
+          anamnesis = {
+            pasien: store.pasien.selected._id,
+            ...anamnesis
+          }
+          response = await store.anamnesis.create(anamnesis)
         }
-        anamnesis = {
-          pasien: activePasien._id,
-          ...anamnesis
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(anamnesis)
-        const response = await axios.post(endpoint, anamnesis);
-        console.log('Response:', response.data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activeAnamnesis, activePasien]
+    [store.anamnesis]
   )
 
   const onInputpajananSubmit = useCallback(
     async (inputpajanan) => {
       try {
-        let endpoint
-        if (activeInputpajanan) {
+        let response
+        if (store.inputpajanan.selected) {
           inputpajanan = {
-            _id: activeInputpajanan._id,
+            _id: store.inputpajanan.selected._id,
             ...inputpajanan
           }
-          endpoint = `${API_ENDPOINT}/inputpajanan/update`
+          response = await store.inputpajanan.update(inputpajanan)
         } else {
-          endpoint = `${API_ENDPOINT}/inputpajanan/create`
+          inputpajanan = {
+            pasien: store.pasien.selected._id,
+            ...inputpajanan
+          }
+          response = await store.inputpajanan.create(inputpajanan)
         }
-        inputpajanan = {
-          pasien: activePasien._id,
-          ...inputpajanan
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(inputpajanan)
-        const response = await axios.post(endpoint, inputpajanan);
-        console.log('Response:', response.data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activeInputpajanan, activePasien]
+    [store.inputpajanan]
   )
 
   const onDiagnosisSubmit = useCallback(
     async (diagnosis) => {
       try {
-        let endpoint
-        if (activeDiagnosis) {
+        let response
+        if (store.diagnosis.selected) {
           diagnosis = {
-            _id: activeDiagnosis._id,
+            _id: store.diagnosis.selected._id,
             ...diagnosis
           }
-          endpoint = `${API_ENDPOINT}/diagnosis/update`
+          response = await store.diagnosis.update(diagnosis)
         } else {
-          endpoint = `${API_ENDPOINT}/diagnosis/create`
+          diagnosis = {
+            pasien: store.pasien.selected._id,
+            ...diagnosis
+          }
+          response = await store.diagnosis.create(diagnosis)
         }
-        diagnosis = {
-          pasien: activePasien._id,
-          ...diagnosis
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(diagnosis)
-        const response = await axios.post(endpoint, diagnosis);
-        console.log('Response:', response.data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activeDiagnosis, activePasien]
+    [store.diagnosis]
   )
 
   const onFaktorindividuSubmit = useCallback(
     async (faktorindividu) => {
       try {
-        let endpoint
-        if (activeFaktorindividu) {
+        let response
+        if (store.faktorindividu.selected) {
           faktorindividu = {
-            _id: activeFaktorindividu._id,
+            _id: store.faktorindividu.selected._id,
             ...faktorindividu
           }
-          endpoint = `${API_ENDPOINT}/faktorindividu/update`
+          response = await store.faktorindividu.update(faktorindividu)
         } else {
-          endpoint = `${API_ENDPOINT}/faktorindividu/create`
+          faktorindividu = {
+            pasien: store.pasien.selected._id,
+            ...faktorindividu
+          }
+          response = await store.faktorindividu.create(faktorindividu)
         }
-        faktorindividu = {
-          pasien: activePasien._id,
-          ...faktorindividu
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(faktorindividu)
-        const response = await axios.post(endpoint, faktorindividu);
-        console.log('Response:', response.data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activeFaktorindividu, activePasien]
+    [store.faktorindividu]
   )
 
   const onPajananSubmit = useCallback(
     async (pajanan) => {
       try {
-        let endpoint
-        if (activePajanan) {
+        let response
+        if (store.pajanan.selected) {
           pajanan = {
-            _id: activePajanan._id,
+            _id: store.pajanan.selected._id,
             ...pajanan
           }
-          endpoint = `${API_ENDPOINT}/pajanan/update`
+          response = await store.pajanan.update(pajanan)
         } else {
-          endpoint = `${API_ENDPOINT}/pajanan/create`
+          pajanan = {
+            pasien: store.pasien.selected._id,
+            ...pajanan
+          }
+          response = await store.pajanan.create(pajanan)
         }
-        pajanan = {
-          pasien: activePasien._id,
-          ...pajanan
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(pajanan)
-        const response = await axios.post(endpoint, pajanan);
-        console.log('Response:', response.data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activePajanan, activePasien]
+    [store.pajanan]
   )
 
   const onPajananluarkerjaSubmit = useCallback(
     async (pajananluarkerja) => {
       try {
-        let endpoint
-        if (activePajananluarkerja) {
+        let response
+        if (store.pajananluarkerja.selected) {
           pajananluarkerja = {
-            _id: activePajananluarkerja._id,
+            _id: store.pajananluarkerja.selected._id,
             ...pajananluarkerja
           }
-          endpoint = `${API_ENDPOINT}/pajananluarkerja/update`
+          response = await store.pajananluarkerja.update(pajananluarkerja)
         } else {
-          endpoint = `${API_ENDPOINT}/pajananluarkerja/create`
+          pajananluarkerja = {
+            pasien: store.pasien.selected._id,
+            ...pajananluarkerja
+          }
+          response = await store.pajananluarkerja.create(pajananluarkerja)
         }
-        pajananluarkerja = {
-          pasien: activePasien._id,
-          ...pajananluarkerja
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(pajananluarkerja)
-        const response = await axios.post(endpoint, pajananluarkerja);
-        console.log('Response:', response.data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activePajananluarkerja, activePasien]
+    [store.pajananluarkerja]
   )
 
   const onHasildiagnosisSubmit = useCallback(
     async (hasildiagnosis) => {
       try {
-        let endpoint
-        if (activeHasildiagnosis) {
+        let response
+        if (store.hasildiagnosis.selected) {
           hasildiagnosis = {
-            _id: activeHasildiagnosis._id,
+            _id: store.hasildiagnosis.selected._id,
             ...hasildiagnosis
           }
-          endpoint = `${API_ENDPOINT}/hasildiagnosis/update`
+          response = await store.hasildiagnosis.update(hasildiagnosis)
         } else {
-          endpoint = `${API_ENDPOINT}/hasildiagnosis/create`
+          hasildiagnosis = {
+            pasien: store.pasien.selected._id,
+            ...hasildiagnosis
+          }
+          response = await store.hasildiagnosis.create(hasildiagnosis)
         }
-        hasildiagnosis = {
-          pasien: activePasien._id,
-          ...hasildiagnosis
+        
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
         }
-        console.log(hasildiagnosis)
-        const response = await axios.post(endpoint, hasildiagnosis);
-        console.log('Response:', response.data);
-        // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     },
-    [activeHasildiagnosis, activePasien]
+    [store.hasildiagnosis]
   )
-
-  const fetchData = async (pasienId) => {
-    const anamnesisPromise = await axios.get(`${API_ENDPOINT}/anamnesis/${pasienId}`).catch(error => console.log(error))
-    const inputpajananPromise = await axios.get(`${API_ENDPOINT}/inputpajanan/${pasienId}`).catch(error => console.log(error))
-    const diagnosisPromise = await axios.get(`${API_ENDPOINT}/diagnosis/${pasienId}`).catch(error => console.log(error))
-    const pajananPromise = await axios.get(`${API_ENDPOINT}/pajanan/${pasienId}`).catch(error => console.log(error))
-    const faktorindividuPromise = await axios.get(`${API_ENDPOINT}/faktorindividu/${pasienId}`).catch(error => console.log(error))
-    const pajananluarkerjaPromise = await axios.get(`${API_ENDPOINT}/pajananluarkerja/${pasienId}`).catch(error => console.log(error))
-    const hasilDiagnosisPromise = await axios.get(`${API_ENDPOINT}/hasildiagnosis/${pasienId}`).catch(error => console.log(error))
-    
-    await Promise.all([
-      anamnesisPromise,
-      inputpajananPromise,
-      diagnosisPromise,
-      pajananPromise,
-      faktorindividuPromise,
-      pajananluarkerjaPromise,
-      hasilDiagnosisPromise
-    ]).then((values) => {
-      setActiveAnamnesis(values[0].data)
-      setActiveInputpajanan(values[1].data)
-      setActiveDiagnosis(values[2].data)
-      setActivePajanan(values[3].data)
-      setActiveFaktorindividu(values[4].data)
-      setActivePajananluarkerja(values[5].data)
-      setActiveHasildiagnosis(values[6].data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
 
   const getStepContent = (step) => {
     switch (step) {
       case 0:
         return (
-          <NikForm onSubmit={onNikSubmit} />
+          <PasienForm onSubmit={onPasienSubmit} />
         )
       case 1:
         return (
-          <PasienForm onSubmit={onPasienSubmit} activePasien={activePasien} />
+          <AnamnesisForm onSubmit={onAnamnesisSubmit} />
         )
       case 2:
         return (
-          <AnamnesisForm activePasien={activePasien} activeAnamnesis={activeAnamnesis} setActiveAnamnesis={setActiveAnamnesis} onSubmit={onAnamnesisSubmit} />
+          <InputPajananForm onSubmit={onInputpajananSubmit} />
         )
       case 3:
         return (
-          <InputPajananForm activeInputpajanan={activeInputpajanan} onSubmit={onInputpajananSubmit} />
+          <DiagnosisForm onSubmit={onDiagnosisSubmit} />
         )
       case 4:
         return (
-          <DiagnosisForm activeDiagnosis={activeDiagnosis} onSubmit={onDiagnosisSubmit} />
+          <PajananForm onSubmit={onPajananSubmit} />
         )
       case 5:
         return (
-          <PajananForm activePajanan={activePajanan} onSubmit={onPajananSubmit} />
+          <FaktorindividuForm onSubmit={onFaktorindividuSubmit} />
         )
       case 6:
         return (
-          <FaktorindividuForm activePasien={activePasien} activeFaktorindividu={activeFaktorindividu} onSubmit={onFaktorindividuSubmit} />
+          <PajananluarkerjaForm onSubmit={onPajananluarkerjaSubmit} />
         )
       case 7:
         return (
-          <PajananluarkerjaForm activePajananluarkerja={activePajananluarkerja} onSubmit={onPajananluarkerjaSubmit} />
-        )
-      case 8:
-        return (
-          <Hasildiagnosis activeAnamnesis={activeAnamnesis} activeHasildiagnosis={activeHasildiagnosis} onSubmit={onHasildiagnosisSubmit} />
+          <Hasildiagnosis onSubmit={onHasildiagnosisSubmit} />
         )
     }
   }
-
-  useEffect(() => {
-    if (activePasien) {
-      fetchData(activePasien._id)
-    }
-  }, [activePasien])
 
   return (
     <Box sx={{ width: "100%" }}>
       <Stepper nonLinear className="mb-8" activeStep={activeStep}>
         {steps.map((step, index) => (
           <Step key={step} completed={completed[index]}>
-            <StepButton disabled={activeStep < 1} onClick={handleStep(index)}>
-              {step}
-            </StepButton>
+            <StepButton onClick={handleStep(index)} />
           </Step>
         ))}
       </Stepper>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Box className="max-w-screen-sm w-full">
-          {getStepContent(activeStep)}
+          <Typography textAlign="center" variant="h4" gutterBottom>{steps[activeStep]}</Typography>
+          <Box sx={card}>
+            {getStepContent(activeStep)}
+          </Box>
         </Box>
       </Box>
     </Box>
   )
 }
 
-export default FormStepper
+export default observer(FormStepper)

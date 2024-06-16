@@ -1,11 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button, Divider } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import ChainForm from './ChainForm';
 import { questions } from '@/data/questions';
-
-const API_ENDPOINT = 'http://localhost:3003'
+import { StoreContext } from '@/store';
 
 const initValues = (anamnesis) => {
   return {
@@ -17,10 +16,12 @@ const initValues = (anamnesis) => {
   }
 }
 
-export default function AnamnesisForm({ activePasien, activeAnamnesis, setActiveAnamnesis, onSubmit }) {
+export default function AnamnesisForm({ onSubmit }) {
   const [isGejalaSubmitted, setIsGejalaSubmitted] = useState(false)
+  const store = useContext(StoreContext)
 
   const onChainSubmit = async (values) => {
+
     const categorizedGejala = {};
     const categorizedWeights = {};
 
@@ -86,18 +87,9 @@ export default function AnamnesisForm({ activePasien, activeAnamnesis, setActive
     });
 
     try {
-      let endpoint;
-      if (activeAnamnesis) {
-        let anamnesis = {
-          _id: activeAnamnesis._id,
-          ...activeAnamnesis
-        }
-        endpoint = `${API_ENDPOINT}/anamnesis/update`
-      } else {
-        endpoint = `${API_ENDPOINT}/anamnesis/create`
-      }
-      const response = await axios.post(endpoint, {
-        pasien: activePasien._id,
+      let response;
+      let anamnesis = {
+        pasien: store.pasien.selected._id,
         gejala_tetanus: {
           symptom: categorizedGejala.tetanus,
           weight: categorizedWeights.tetanus,
@@ -110,12 +102,38 @@ export default function AnamnesisForm({ activePasien, activeAnamnesis, setActive
           symptom: categorizedGejala.hepatitis,
           weight: categorizedWeights.hepatitis,
         }
-      }).then((data) => {
-        console.log(data)
-        setActiveAnamnesis(data.data)
-        setIsGejalaSubmitted(true)
-      })
-      return response.data
+      }
+      if (store.anamnesis.selected) {
+        response = await store.anamnesis.update(anamnesis)
+      } else {
+        response = await store.anamnesis.create(anamnesis)
+      }
+      const { status, data } = await response
+
+      if (status !== 200) {
+        return null
+      }
+
+      setIsGejalaSubmitted(true)
+      // const { status, data } = await axios.post(endpoint, {
+      //   pasien: activePasien._id,
+      //   gejala_tetanus: {
+      //     symptom: categorizedGejala.tetanus,
+      //     weight: categorizedWeights.tetanus,
+      //   },
+      //   gejala_tuberkulosis: {
+      //     symptom: categorizedGejala.tuberkulosis,
+      //     weight: categorizedWeights.tuberkulosis,
+      //   },
+      //   gejala_hepatitis: {
+      //     symptom: categorizedGejala.hepatitis,
+      //     weight: categorizedWeights.hepatitis,
+      //   }
+      // }).then((data) => {
+      //   console.log(data)
+      //   setActiveAnamnesis(data.data)
+      //   setIsGejalaSubmitted(true)
+      // })
       
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -124,40 +142,39 @@ export default function AnamnesisForm({ activePasien, activeAnamnesis, setActive
   };
 
   const initialValues = useMemo(
-    () => initValues(activeAnamnesis),
-    [activeAnamnesis]
+    () => initValues(store.anamnesis.selected),
+    [store]
   )
 
   const symptomWithMaxWeight = useMemo(
     () => {
       let labelGejala;
       let objectWithMaxWeight;
-      let maxWeight = Math.max(activeAnamnesis?.gejala_tuberkulosis.weight, activeAnamnesis?.gejala_hepatitis.weight, activeAnamnesis?.gejala_tetanus.weight);
-      if (maxWeight === activeAnamnesis?.gejala_tuberkulosis.weight) {
-        objectWithMaxWeight = activeAnamnesis?.gejala_tuberkulosis;
+      let maxWeight = Math.max(store.anamnesis.selected?.gejala_tuberkulosis.weight, store.anamnesis.selected?.gejala_hepatitis.weight, store.anamnesis.selected?.gejala_tetanus.weight);
+      if (maxWeight === store.anamnesis.selected?.gejala_tuberkulosis.weight) {
+        objectWithMaxWeight = store.anamnesis.selected?.gejala_tuberkulosis;
         labelGejala = "tuberkulosis"
-      } else if (maxWeight === activeAnamnesis?.gejala_tetanus.weight) {
-        objectWithMaxWeight = activeAnamnesis?.gejala_tetanus;
+      } else if (maxWeight === store.anamnesis.selected?.gejala_tetanus.weight) {
+        objectWithMaxWeight = store.anamnesis.selected?.gejala_tetanus;
         labelGejala = "tetanus"
       } else {
-        objectWithMaxWeight = activeAnamnesis?.gejala_hepatitis;
+        objectWithMaxWeight = store.anamnesis.selected?.gejala_hepatitis;
         labelGejala = "hepatitis"
       }
       return { labelGejala, ...objectWithMaxWeight }
     },
-    [activeAnamnesis]
+    [store.anamnesis]
   )
 
   useEffect(() => {
-    setIsGejalaSubmitted(activeAnamnesis?.gejala_hepatitis && activeAnamnesis?.gejala_tetanus && activeAnamnesis?.gejala_tuberkulosis ? true : false)
-  }, [activeAnamnesis])
+    setIsGejalaSubmitted(store.anamnesis.selected?.gejala_hepatitis && store.anamnesis.selected?.gejala_tetanus && store.anamnesis.selected?.gejala_tuberkulosis ? true : false)
+  }, [store.anamnesis])
   
   return (
     <>
     {isGejalaSubmitted ?
     <>
-    {console.log(symptomWithMaxWeight)}
-    {activeAnamnesis && (
+    {store.anamnesis && (
       <div className='mb-8'>
         <div className='mb-2'>
           <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala {symptomWithMaxWeight.labelGejala}: </label>
@@ -223,7 +240,7 @@ export default function AnamnesisForm({ activePasien, activeAnamnesis, setActive
     </Formik>
     </>
     :
-      <ChainForm anamnesis={activeAnamnesis} onSubmit={onChainSubmit} />
+      <ChainForm onSubmit={onChainSubmit} />
     }
     </>
   )
