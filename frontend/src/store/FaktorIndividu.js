@@ -10,6 +10,19 @@ export default class FaktorIndividu {
 
   setSelected = (faktorindividu) => (this.selected = faktorindividu);
 
+  *fetch(pasienId) {
+    try {
+      const response = yield api.get(`/faktorindividu/${pasienId}`);
+      const faktorindividu = response.data
+      this.setSelected(faktorindividu)
+
+      return { status: 200, data: response.data };
+    } catch (error) {
+      this.setSelected(null)
+      return { status: error?.response?.status };
+    }
+  }
+
   *update(data) {
     try {
       const response = yield api.post('/faktorindividu/update', data);

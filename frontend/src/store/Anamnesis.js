@@ -14,23 +14,6 @@ export default class Anamnesis {
     return !!this.selected.gejalaSubmitted;
   }
 
-  get symptomWithMaxWeight() {
-    let labelGejala;
-    let objectWithMaxWeight;
-    let maxWeight = Math.max(this.selected?.gejala_tuberkulosis?.weight, this.selected?.gejala_hepatitis?.weight, this.selected?.gejala_tetanus?.weight);
-    if (maxWeight === this.selected?.gejala_tuberkulosis?.weight) {
-      objectWithMaxWeight = this.selected?.gejala_tuberkulosis;
-      labelGejala = "tuberkulosis"
-    } else if (maxWeight === this.selected?.gejala_tetanus?.weight) {
-      objectWithMaxWeight = this.selected?.gejala_tetanus;
-      labelGejala = "tetanus"
-    } else {
-      objectWithMaxWeight = this.selected?.gejala_hepatitis;
-      labelGejala = "hepatitis"
-    }
-    return { labelGejala, ...objectWithMaxWeight }
-  }
-
   *fetch(pasienId) {
     try {
       const response = yield api.get(`/anamnesis/${pasienId}`);

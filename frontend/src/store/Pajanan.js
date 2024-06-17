@@ -10,6 +10,19 @@ export default class Pajanan {
 
   setSelected = (pajanan) => (this.selected = pajanan);
 
+  *fetch(pasienId) {
+    try {
+      const response = yield api.get(`/pajanan/${pasienId}`);
+      const pajanan = response.data
+      this.setSelected(pajanan)
+
+      return { status: 200, data: response.data };
+    } catch (error) {
+      this.setSelected(null)
+      return { status: error?.response?.status };
+    }
+  }
+
   *update(data) {
     try {
       const response = yield api.post('/pajanan/update', data);

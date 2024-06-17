@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useContext, useEffect, useState } from "react"
-import { Stepper, Step, StepContent, StepLabel, Box, StepButton, Typography } from "@mui/material"
+import { Stepper, Step, StepContent, StepLabel, Box, StepButton, Typography, Button } from "@mui/material"
 import { card } from "@/styles/styles"
 import PasienForm from "./forms/PasienForm"
 import ChainForm from "./forms/ChainForm"
@@ -18,6 +18,8 @@ import Hasildiagnosis from "./forms/Hasildiagnosis"
 import { StoreContext } from "@/store"
 import { observer } from "mobx-react-lite"
 import useFillStore from "@/hooks/useFillStore"
+import Hasil from "./forms/Hasil"
+import { useRouter } from "next/navigation"
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_GATEWAY_URL
 
@@ -30,10 +32,12 @@ const steps = [
   "Faktor Individu",
   "Pajanan luar tempat kerja",
   "Hasil diagnosis",
+  "Hasil"
 ]
 
 const FormStepper = () => {
   const store = useContext(StoreContext)
+  const router = useRouter()
 
   const [activeStep, setActiveStep] = useState(0)
   const [completed, setCompleted] = useState({});
@@ -65,7 +69,7 @@ const FormStepper = () => {
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);  
   };
 
   const handleStep = (step) => () => {
@@ -84,15 +88,18 @@ const FormStepper = () => {
     setCompleted({});
   };
 
-  const onPasienSubmit = async (pasien) => {
-    try {
-      const response = await axios.post(`${API_ENDPOINT}/pasien/update`, pasien);
-      console.log('Response:', response.data);
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
-  }
+  const onPasienSubmit = useCallback(
+    async (pasien) => {
+      try {
+        const response = await axios.post(`${API_ENDPOINT}/pasien/update`, pasien);
+        console.log('Response:', response.data);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    },
+    [store.pasien]
+  )
 
   const onAnamnesisSubmit = useCallback(
     async (anamnesis) => {
@@ -133,18 +140,19 @@ const FormStepper = () => {
             _id: store.inputpajanan.selected._id,
             ...inputpajanan
           }
-          response = await store.inputpajanan.update(inputpajanan)
+          const { status, data } = await store.inputpajanan.update(inputpajanan)
+          if (status !== 200) {
+            return null
+          }
         } else {
           inputpajanan = {
             pasien: store.pasien.selected._id,
             ...inputpajanan
           }
-          response = await store.inputpajanan.create(inputpajanan)
-        }
-        
-        const { status, data } = await response
-        if (status !== 200) {
-          return null
+          const { status, data } = await store.inputpajanan.create(inputpajanan)
+          if (status !== 200) {
+            return null
+          }
         }
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
@@ -338,14 +346,21 @@ const FormStepper = () => {
         return (
           <Hasildiagnosis onSubmit={onHasildiagnosisSubmit} />
         )
+      case 8:
+        return (
+          <Hasil />
+        )
     }
   }
 
   return (
     <Box sx={{ width: "100%" }}>
+      <Box marginBottom={3}>
+        <Button variant="contained" onClick={() => router.push('/')}>Keluar</Button>
+      </Box>
       <Stepper nonLinear className="mb-8" activeStep={activeStep}>
         {steps.map((step, index) => (
-          <Step key={step} completed={completed[index]}>
+          <Step key={step} completed={completed[index]} disabled={index == 8}>
             <StepButton onClick={handleStep(index)} />
           </Step>
         ))}

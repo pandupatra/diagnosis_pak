@@ -1,20 +1,24 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from '@mui/material';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { StoreContext } from '@/store';
+import { observer } from 'mobx-react-lite';
 
-const initValues = (hasildiagnosis, anamnesis) => {
+const initValues = (hasildiagnosis) => {
   return {
     kesimpulan: hasildiagnosis?.kesimpulan || '',
+    hasil_diagnosis_pak: hasildiagnosis?.hasil_diagnosis_pak || '',
     rekomendasi: hasildiagnosis?.rekomendasi || '',
     evaluasi: hasildiagnosis?.evaluasi || '' 
   }
 }
 
-export default function Hasildiagnosis({ activeAnamnesis, activeHasildiagnosis, onSubmit }) {
+export default observer(function Hasildiagnosis({ onSubmit }) {
+  const store = useContext(StoreContext)
 
   const initialValues = useMemo(
-    () => initValues(activeHasildiagnosis, activeAnamnesis),
-    [activeHasildiagnosis, activeAnamnesis]
+    () => initValues(store.hasildiagnosis.selected),
+    [store.hasildiagnosis.selected]
   )
   return (
     <Formik
@@ -29,6 +33,14 @@ export default function Hasildiagnosis({ activeAnamnesis, activeHasildiagnosis, 
               <Field as="textarea" id="kesimpulan" name="kesimpulan" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
             </div>
             <ErrorMessage className='block text-sm font-medium text-red-600' name="kesimpulan" component="div" />
+          </div>
+
+          <div>
+            <label htmlFor="hasil_diagnosis_pak" className='block text-sm font-medium leading-6 text-gray-900'>Hasil diagnosis PAK</label>
+            <div className="mt-2">
+              <Field as="textarea" id="hasil_diagnosis_pak" name="hasil_diagnosis_pak" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            </div>
+            <ErrorMessage className='block text-sm font-medium text-red-600' name="hasil_diagnosis_pak" component="div" />
           </div>
 
           <div>
@@ -52,4 +64,4 @@ export default function Hasildiagnosis({ activeAnamnesis, activeHasildiagnosis, 
       )}
     </Formik>
   )
-}
+})

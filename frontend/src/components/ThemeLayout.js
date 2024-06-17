@@ -6,6 +6,7 @@ import theme from '@/styles/theme';
 import Hero from "./Hero";
 
 export default function ThemeLayout({ children }) {
+  
   return (
     <ThemeProvider theme={theme}>
       <InjectStoreContext>

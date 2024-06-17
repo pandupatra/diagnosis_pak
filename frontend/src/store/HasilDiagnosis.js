@@ -10,6 +10,19 @@ export default class HasilDiagnosis {
 
   setSelected = (hasildiagnosis) => (this.selected = hasildiagnosis);
 
+  *fetch(pasienId) {
+    try {
+      const response = yield api.get(`/hasildiagnosis/${pasienId}`);
+      const hasildiagnosis = response.data
+      this.setSelected(hasildiagnosis)
+
+      return { status: 200, data: response.data };
+    } catch (error) {
+      this.setSelected(null)
+      return { status: error?.response?.status };
+    }
+  }
+
   *update(data) {
     try {
       const response = yield api.post('/hasildiagnosis/update', data);

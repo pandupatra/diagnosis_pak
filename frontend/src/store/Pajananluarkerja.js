@@ -10,6 +10,19 @@ export default class PajananLuarKerja {
 
   setSelected = (pajananluarkerja) => (this.selected = pajananluarkerja);
 
+  *fetch(pasienId) {
+    try {
+      const response = yield api.get(`/pajananluarkerja/${pasienId}`);
+      const pajananluarkerja = response.data
+      this.setSelected(pajananluarkerja)
+
+      return { status: 200, data: response.data };
+    } catch (error) {
+      this.setSelected(null)
+      return { status: error?.response?.status };
+    }
+  }
+
   *update(data) {
     try {
       const response = yield api.post('/pajananluarkerja/update', data);

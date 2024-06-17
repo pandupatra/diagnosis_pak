@@ -1,6 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from '@mui/material';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { StoreContext } from '@/store';
+import { observer } from 'mobx-react-lite';
 
 const initValues = (inputpajanan) => {
   return {
@@ -16,11 +18,12 @@ const initValues = (inputpajanan) => {
   }
 }
 
-export default function InputPajananForm({ activeInputpajanan, onSubmit }) {
+export default observer(function InputPajananForm({ onSubmit }) {
+  const store = useContext(StoreContext)
 
   const initialValues = useMemo(
-    () => initValues(activeInputpajanan),
-    [activeInputpajanan]
+    () => initValues(store.inputpajanan.selected),
+    [store.inputpajanan.selected]
   )
   return (
     <Formik
@@ -98,4 +101,4 @@ export default function InputPajananForm({ activeInputpajanan, onSubmit }) {
       )}
     </Formik>
   )
-}
+})

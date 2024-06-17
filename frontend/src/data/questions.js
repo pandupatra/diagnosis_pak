@@ -69,7 +69,7 @@ export const questions = [
   },
   {
     question: "Apakah anda mengalami kesulitan menelan?",
-    symptom: "Sumbatan pada saluran pernapasan",
+    symptom: "Kesulitan menelan",
     type: "tetanus",
     weight: 5
   },

@@ -1,6 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from '@mui/material';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { StoreContext } from '@/store';
 
 const initValues = (pajananluarkerja) => {
   return {
@@ -10,11 +11,12 @@ const initValues = (pajananluarkerja) => {
   }
 }
 
-export default function PajananluarkerjaForm({ activePajananluarkerja, onSubmit }) {
+export default function PajananluarkerjaForm({ onSubmit }) {
+  const store = useContext(StoreContext)
 
   const initialValues = useMemo(
-    () => initValues(activePajananluarkerja),
-    [activePajananluarkerja]
+    () => initValues(store.pajananluarkerja.selected),
+    [store.pajananluarkerja.selected]
   )
   return (
     <Formik

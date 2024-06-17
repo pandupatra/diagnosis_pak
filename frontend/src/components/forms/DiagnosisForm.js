@@ -2,26 +2,27 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from '@mui/material';
 import { useContext, useMemo } from 'react';
 import { StoreContext } from '@/store';
+import { observer } from 'mobx-react-lite';
 
 const initValues = (diagnosis, anamnesis) => {
   // compare the weights
   let objectWithMaxWeight;
   let labelGejala;
-  if (anamnesis) {
-    let maxWeight = Math.max(anamnesis?.gejala_tuberkulosis.weight, anamnesis?.gejala_hepatitis.weight, anamnesis?.gejala_tetanus.weight);
-    if (maxWeight === anamnesis?.gejala_tuberkulosis.weight) {
+  let hasilDiagnosisPak;
+  if (anamnesis.gejalaSubmitted) {
+    let maxWeight = Math.max(anamnesis?.gejala_tuberkulosis?.weight, anamnesis?.gejala_hepatitis?.weight, anamnesis?.gejala_tetanus?.weight);
+    if (maxWeight === anamnesis?.gejala_tuberkulosis?.weight) {
       objectWithMaxWeight = anamnesis?.gejala_tuberkulosis;
       labelGejala = "tuberkulosis"
-    } else if (maxWeight === anamnesis?.gejala_tetanus.weight) {
+    } else if (maxWeight === anamnesis?.gejala_tetanus?.weight) {
       objectWithMaxWeight = anamnesis?.gejala_tetanus;
       labelGejala = "tetanus"
     } else {
       objectWithMaxWeight = anamnesis?.gejala_hepatitis;
       labelGejala = "hepatitis"
     }
-    
-    }
-  const hasilDiagnosisPak = `Berdasarkan anamnesis, pasien paling banyak memiliki gejala ${labelGejala} yaitu : ${objectWithMaxWeight?.symptom.join(", ")}`
+    hasilDiagnosisPak = `Berdasarkan anamnesis, pasien paling banyak memiliki gejala ${labelGejala} yaitu : ${objectWithMaxWeight?.symptom.join(", ")}`
+  }
 
   return {
     waktu_timbul_gejala: diagnosis?.waktu_timbul_gejala || '',
@@ -30,12 +31,12 @@ const initValues = (diagnosis, anamnesis) => {
   }
 }
 
-export default function DiagnosisForm({ onSubmit }) {
+export default observer(function DiagnosisForm({ onSubmit }) {
   const store = useContext(StoreContext)
 
   const initialValues = useMemo(
     () => initValues(store.diagnosis.selected, store.anamnesis.selected),
-    [store.diagnosis]
+    [store.diagnosis, store.anamnesis]
   )
   return (
     <Formik
@@ -73,4 +74,4 @@ export default function DiagnosisForm({ onSubmit }) {
       )}
     </Formik>
   )
-}
+})

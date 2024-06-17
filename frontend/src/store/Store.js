@@ -30,4 +30,15 @@ export default class Store {
       pajananluarkerja: observable,
     })
   }
+
+  clear() {
+    this.pasien.selected = null
+    this.anamnesis.selected = null
+    this.diagnosis.selected = null
+    this.faktorindividu.selected = null
+    this.hasildiagnosis.selected = null
+    this.inputpajanan.selected = null
+    this.pajanan.selected = null
+    this.pajananluarkerja.selected = null
+  }
 }

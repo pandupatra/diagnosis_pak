@@ -1,6 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from '@mui/material';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { StoreContext } from '@/store';
 
 const initValues = (pajanan) => {
   return {
@@ -13,10 +14,11 @@ const initValues = (pajanan) => {
 }
 
 export default function PajananForm({ activePajanan, onSubmit }) {
-
+  const store = useContext(StoreContext)
+  
   const initialValues = useMemo(
-    () => initValues(activePajanan),
-    [activePajanan]
+    () => initValues(store.pajanan.selected),
+    [store.pajanan.selected]
   )
   return (
     <Formik

@@ -8,7 +8,13 @@ import { useContext, useEffect } from "react"
 
 async function fetchData(store, pasienId) {
   return await Promise.all([
-    store.anamnesis.fetch(pasienId)
+    store.anamnesis.fetch(pasienId),
+    store.inputpajanan.fetch(pasienId),
+    store.diagnosis.fetch(pasienId),
+    store.pajanan.fetch(pasienId),
+    store.faktorindividu.fetch(pasienId),
+    store.pajananluarkerja.fetch(pasienId),
+    store.hasildiagnosis.fetch(pasienId)
   ])
 }
 
@@ -16,7 +22,6 @@ export default function Pasien() {
   const store = useContext(StoreContext)
   const { id } = useParams()
   const router = useRouter()
-
   if (!store.pasien.selected._id) {
     router.push('/')
   }

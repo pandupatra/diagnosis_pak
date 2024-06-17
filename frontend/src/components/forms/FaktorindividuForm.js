@@ -12,7 +12,7 @@ const initValues = (faktorindividu) => {
   }
 }
 
-export default function FaktorindividuForm({ activePasien, activeFaktorindividu, onSubmit }) {
+export default function FaktorindividuForm({ onSubmit }) {
   const store = useContext(StoreContext)
 
   function getAge(dateString) {
@@ -27,8 +27,8 @@ export default function FaktorindividuForm({ activePasien, activeFaktorindividu,
 }
 
   const initialValues = useMemo(
-    () => initValues(activeFaktorindividu),
-    [activeFaktorindividu]
+    () => initValues(store.faktorindividu.selected),
+    [store.faktorindividu.selected]
   )
   return (
     <Formik

@@ -27,7 +27,7 @@ const initValues = (pasien) => {
   }
 }
 
-const PasienForm = ({ activePasien, onSubmit }) => {
+const PasienForm = ({ onSubmit }) => {
   const store = useContext(StoreContext)
   const initialValues = useMemo(
     () => initValues(store.pasien.selected),
