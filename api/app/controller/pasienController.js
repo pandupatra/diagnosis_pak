@@ -5,8 +5,8 @@ module.exports = {
   signInByNik: async (req, res) => {
     const { nik } = req.body
     try {
-      const pasien = await Pasien.findOne({ nik: nik }).lean()
-      if (pasien) {
+      const pasien = await Pasien.find({ nik: nik }).lean()
+      if (pasien.length) {
         return res.json(pasien)
       } else {
         return res.status(404).json({ errors: ["pasien tidak ditemukan"] });
@@ -23,6 +23,8 @@ module.exports = {
       }
       console.log(pasienBody)
       let pasien = await Pasien(pasienBody)
+
+
 
       await pasien.save()
 

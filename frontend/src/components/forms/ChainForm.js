@@ -48,7 +48,7 @@ const validationSchema = Yup.object(
   }, {})
 );
 
-export default function ChainForm ({ anamnesis, onSubmit }) {
+export default function ChainForm ({ onSubmit }) {
   const [activeStep, setActiveStep] = useState(0)
 
   const handleNext = () => {
@@ -77,64 +77,64 @@ export default function ChainForm ({ anamnesis, onSubmit }) {
         <Form className='space-y-4 w-full'>
           {questions.map((q, index) => (
             index == activeStep && (
-              <>
               <div key={index}>
-                <div className="block w-full text-sm font-medium leading-6 text-gray-900">
-                  <label>{q.question}</label>
-                </div>
-                <div className="flex items-center gap-x-3">
-                  <label>
-                    <Field type="radio" name={`question_${index}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="yes" />
-                    Ya
-                  </label>
-                  <label>
-                    <Field type="radio" name={`question_${index}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="no" />
-                    Tidak
-                  </label>
-                </div>
-                {errors[`question_${index}`] && touched[`question_${index}`] && (
-                  <ErrorMessage className='block text-sm font-medium text-red-600' name={`question_${index}`} component="div" />
-                )}
-              </div>
-              {/* Render follow up questions conditionally */}
-              {values[`question_${index}`] == "yes" && questions[index].follow_up && (
-                questions[index].follow_up.map((fu, fuIndex) => (
-                  <div key={fuIndex}>
-                    <div className="mt-1 text-sm leading-6 text-gray-600">
-                      <label>{fu.question}</label>
-                    </div>
-                    <div className="flex items-center gap-x-3">
-                      <label>
-                        <Field type="radio" defaultChecked name={`question_${index}_follow_up_${fuIndex}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="yes" />
-                        Ya
-                      </label>
-                      <label>
-                        <Field type="radio" name={`question_${index}_follow_up_${fuIndex}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="no" />
-                        Tidak
-                      </label>
-                    </div>
-                    {errors[`question_${index}_follow_up_${fuIndex}`] && touched[`question_${index}_follow_up_${fuIndex}`] && (
-                      <ErrorMessage className='block text-sm font-medium text-red-600' name={`question_${index}_follow_up_${fuIndex}`} component="div" />
-                    )}
+                <div>
+                  <div className="block w-full text-sm font-medium leading-6 text-gray-900">
+                    <label>{q.question}</label>
                   </div>
-                ))
-              )}
-              <div className="flex flex-row justify-between">
-                <Button disabled={activeStep == 0} variant="contained" type="button" onClick={handleBack}>
-                  Back
-                </Button>
-                {activeStep < maxSteps && (
-                  <Button 
-                    disabled={!values[`question_${index}`]} 
-                    variant="contained" 
-                    type="button" 
-                    onClick={handleNext}
-                  >
-                    Next
-                  </Button>
+                  <div className="flex items-center gap-x-3">
+                    <label>
+                      <Field type="radio" name={`question_${index}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="yes" />
+                      Ya
+                    </label>
+                    <label>
+                      <Field type="radio" name={`question_${index}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="no" />
+                      Tidak
+                    </label>
+                  </div>
+                  {errors[`question_${index}`] && touched[`question_${index}`] && (
+                    <ErrorMessage className='block text-sm font-medium text-red-600' name={`question_${index}`} component="div" />
+                  )}
+                </div>
+                {/* Render follow up questions conditionally */}
+                {values[`question_${index}`] == "yes" && questions[index].follow_up && (
+                  questions[index].follow_up.map((fu, fuIndex) => (
+                    <div key={fuIndex}>
+                      <div className="mt-1 text-sm leading-6 text-gray-600">
+                        <label>{fu.question}</label>
+                      </div>
+                      <div className="flex items-center gap-x-3">
+                        <label>
+                          <Field type="radio" defaultChecked name={`question_${index}_follow_up_${fuIndex}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="yes" />
+                          Ya
+                        </label>
+                        <label>
+                          <Field type="radio" name={`question_${index}_follow_up_${fuIndex}`} className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" value="no" />
+                          Tidak
+                        </label>
+                      </div>
+                      {errors[`question_${index}_follow_up_${fuIndex}`] && touched[`question_${index}_follow_up_${fuIndex}`] && (
+                        <ErrorMessage className='block text-sm font-medium text-red-600' name={`question_${index}_follow_up_${fuIndex}`} component="div" />
+                      )}
+                    </div>
+                  ))
                 )}
+                <div className="flex flex-row justify-between mt-4">
+                  <Button disabled={activeStep == 0} variant="contained" type="button" onClick={handleBack}>
+                    Back
+                  </Button>
+                  {activeStep < maxSteps && (
+                    <Button 
+                      disabled={!values[`question_${index}`]} 
+                      variant="contained" 
+                      type="button" 
+                      onClick={handleNext}
+                    >
+                      Next
+                    </Button>
+                  )}
+                </div>
               </div>
-              </>
               
             )
           ))}

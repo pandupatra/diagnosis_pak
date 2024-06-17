@@ -5,6 +5,7 @@ import axios from 'axios';
 import ChainForm from './ChainForm';
 import { questions } from '@/data/questions';
 import { StoreContext } from '@/store';
+import { observer } from 'mobx-react-lite';
 
 const initValues = (anamnesis) => {
   return {
@@ -16,8 +17,8 @@ const initValues = (anamnesis) => {
   }
 }
 
-export default function AnamnesisForm({ onSubmit }) {
-  const [isGejalaSubmitted, setIsGejalaSubmitted] = useState(false)
+const AnamnesisForm = ({ onSubmit }) => {
+  // const [isGejalaSubmitted, setIsGejalaSubmitted] = useState()
   const store = useContext(StoreContext)
 
   const onChainSubmit = async (values) => {
@@ -87,7 +88,6 @@ export default function AnamnesisForm({ onSubmit }) {
     });
 
     try {
-      let response;
       let anamnesis = {
         pasien: store.pasien.selected._id,
         gejala_tetanus: {
@@ -101,60 +101,33 @@ export default function AnamnesisForm({ onSubmit }) {
         gejala_hepatitis: {
           symptom: categorizedGejala.hepatitis,
           weight: categorizedWeights.hepatitis,
-        }
+        },
+        gejalaSubmitted: true
       }
-      if (store.anamnesis.selected) {
-        response = await store.anamnesis.update(anamnesis)
-      } else {
-        response = await store.anamnesis.create(anamnesis)
-      }
-      const { status, data } = await response
-
+      const { status, data } = await store.anamnesis.create(anamnesis)
       if (status !== 200) {
         return null
       }
-
-      setIsGejalaSubmitted(true)
-      // const { status, data } = await axios.post(endpoint, {
-      //   pasien: activePasien._id,
-      //   gejala_tetanus: {
-      //     symptom: categorizedGejala.tetanus,
-      //     weight: categorizedWeights.tetanus,
-      //   },
-      //   gejala_tuberkulosis: {
-      //     symptom: categorizedGejala.tuberkulosis,
-      //     weight: categorizedWeights.tuberkulosis,
-      //   },
-      //   gejala_hepatitis: {
-      //     symptom: categorizedGejala.hepatitis,
-      //     weight: categorizedWeights.hepatitis,
-      //   }
-      // }).then((data) => {
-      //   console.log(data)
-      //   setActiveAnamnesis(data.data)
-      //   setIsGejalaSubmitted(true)
-      // })
       
     } catch (error) {
       console.error('Error submitting form:', error);
     }
-
   };
 
   const initialValues = useMemo(
     () => initValues(store.anamnesis.selected),
-    [store]
+    [store.anamnesis]
   )
 
   const symptomWithMaxWeight = useMemo(
     () => {
       let labelGejala;
       let objectWithMaxWeight;
-      let maxWeight = Math.max(store.anamnesis.selected?.gejala_tuberkulosis.weight, store.anamnesis.selected?.gejala_hepatitis.weight, store.anamnesis.selected?.gejala_tetanus.weight);
-      if (maxWeight === store.anamnesis.selected?.gejala_tuberkulosis.weight) {
+      let maxWeight = Math.max(store.anamnesis.selected?.gejala_tuberkulosis?.weight, store.anamnesis.selected?.gejala_hepatitis?.weight, store.anamnesis.selected?.gejala_tetanus?.weight);
+      if (maxWeight === store.anamnesis.selected?.gejala_tuberkulosis?.weight) {
         objectWithMaxWeight = store.anamnesis.selected?.gejala_tuberkulosis;
         labelGejala = "tuberkulosis"
-      } else if (maxWeight === store.anamnesis.selected?.gejala_tetanus.weight) {
+      } else if (maxWeight === store.anamnesis.selected?.gejala_tetanus?.weight) {
         objectWithMaxWeight = store.anamnesis.selected?.gejala_tetanus;
         labelGejala = "tetanus"
       } else {
@@ -163,18 +136,14 @@ export default function AnamnesisForm({ onSubmit }) {
       }
       return { labelGejala, ...objectWithMaxWeight }
     },
-    [store.anamnesis]
+    [store.anamnesis.selected]
   )
 
-  useEffect(() => {
-    setIsGejalaSubmitted(store.anamnesis.selected?.gejala_hepatitis && store.anamnesis.selected?.gejala_tetanus && store.anamnesis.selected?.gejala_tuberkulosis ? true : false)
-  }, [store.anamnesis])
-  
   return (
     <>
-    {isGejalaSubmitted ?
+    {store.anamnesis.isGejalaSubmitted ?
     <>
-    {store.anamnesis && (
+    {symptomWithMaxWeight && (
       <div className='mb-8'>
         <div className='mb-2'>
           <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala {symptomWithMaxWeight.labelGejala}: </label>
@@ -245,3 +214,5 @@ export default function AnamnesisForm({ onSubmit }) {
     </>
   )
 }
+
+export default observer(AnamnesisForm)

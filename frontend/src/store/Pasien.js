@@ -3,6 +3,7 @@ import api from '@/utils/apiService';
 
 export default class Pasien {
   constructor() {
+    this.items = []
     this.selected = {}
 
     makeAutoObservable(this)
@@ -13,9 +14,7 @@ export default class Pasien {
   *signin(nik) {
     try {
       const response = yield api.post('/pasien/signin', nik);
-      const pasien = response.data
-      this.setSelected(pasien)
-
+      this.items = response.data;
       return { status: 200, data: response.data };
     } catch (error) {
       return { status: error?.response?.status };

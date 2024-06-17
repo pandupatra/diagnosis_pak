@@ -84,28 +84,6 @@ const FormStepper = () => {
     setCompleted({});
   };
 
-  const onNikSubmit = async (nik) => {
-    try {
-      const { status, data } = await store.pasien.signin(nik)
-      if (status == 200) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      }
-    } catch (error) {
-      if (error.response.status == 404) {
-        try {
-          // const response = await axios.post(`${API_ENDPOINT}/pasien/create`, nik);
-          const { status, data } = await store.pasien.signin(nik)
-          if (status == 200) {
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-          }
-        } catch (error) {
-          console.error('Error submitting form:', error);
-        }
-      }
-      console.error({ errors: error.message })
-    }
-  }
-
   const onPasienSubmit = async (pasien) => {
     try {
       const response = await axios.post(`${API_ENDPOINT}/pasien/update`, pasien);
