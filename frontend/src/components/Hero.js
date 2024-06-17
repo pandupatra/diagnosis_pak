@@ -4,8 +4,12 @@ const { Box, Typography, Container } = require("@mui/material")
 const Hero = ({ title }) => {
 
   const HeroBox = styled(Box)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     position: relative;
-    padding: 200px 0;
+    padding: 2rem 0;
+    height: 50vh;
     width: 100%;
     background-image: url('/hero.jpg');
     background-size: cover;
