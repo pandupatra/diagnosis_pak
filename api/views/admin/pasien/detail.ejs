@@ -1,0 +1,71 @@
+<%- include ("../../partials/header.ejs") %>
+<%- include ("../../partials/navbar.ejs") %>
+<%- include ("../../partials/sidebar.ejs") %>
+<main class="app-main"> <!--begin::App Content Header-->
+  <div class="app-content-header"> <!--begin::Container-->
+    <div class="container-fluid"> <!--begin::Row-->
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Pasien</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="/pasien">Pasien</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+              <%= pasien.nama %>
+            </li>
+          </ol>
+        </div>
+      </div> <!--end::Row-->
+    </div> <!--end::Container-->
+  </div> <!--end::App Content Header--> <!--begin::App Content-->
+  <div class="app-content"> <!--begin::Container-->
+    <div class="container-fluid"> <!--begin::Row-->
+      <div class="card card-primary card-outline mb-4"> <!--begin::Header-->
+        <div class="card-body">
+          <h4><b>Anamnesis</b></h4>
+          <span>Gejala tetanus :</span>
+          <ul>
+            <% for(let i = 0; i < anamnesis?.gejala_tetanus.symptom.length; i++ ) { %>
+              <li><%= anamnesis?.gejala_tetanus.symptom[i] %></li>
+            <% } %>
+          </ul>
+
+          <span>Gejala tuberkulosis :</span>
+          <ul>
+            <% for(let i = 0; i < anamnesis?.gejala_tuberkulosis.symptom.length; i++ ) { %>
+              <li><%= anamnesis?.gejala_tuberkulosis.symptom[i] %></li>
+            <% } %>
+          </ul>
+
+          <span>Gejala hepatitis :</span>
+          <ul>
+            <% for(let i = 0; i < anamnesis?.gejala_hepatitis.symptom.length; i++ ) { %>
+              <li><%= anamnesis?.gejala_hepatitis.symptom[i] %></li>
+            <% } %>
+          </ul>
+
+          <p>Pemeriksaan fisik : <%= anamnesis?.pemeriksaan_fisik %></p>
+          <p>Tingkat pernapasan : <%= anamnesis?.pemeriksaan_fisik %></p>
+          <p>Abdomen : <%= anamnesis?.abdomen %></p>
+          <p>Tekanan darah : <%= anamnesis?.tekanan_darah %></p>
+          <p>Pemeriksaan penunjang : <%= anamnesis?.pemeriksaan_penunjang %></p>
+
+          <h4><b>Input pajanan</b></h4>
+          <p>Deskripsi pekerjaan : <%= inputPajanan?.deskripsi_pekerjaan %></p>
+          <p>Periode waktu : <%= inputPajanan?.periode_waktu %></p>
+          <p>Pajanan : <%= inputPajanan?.pajanan %></p>
+          <p>Bahan : <%= inputPajanan?.bahan %></p>
+          <p>Cara Kerja : <%= inputPajanan?.cara_kerja %></p>
+          <p>Proses Kerja : <%= inputPajanan?.proses_kerja %></p>
+          <p>Riwayat Kecelakaan Kerja : <%= inputPajanan?.riwayat_kecelakaan_kerja %></p>
+          <p>APD : <%= inputPajanan?.apd %></p>
+        </div>
+      </div> <!--end::Toast-->
+    </div> <!--end::Container-->
+  </div> <!--end::App Content-->
+</main> <!--end::App Main-->
+
+<%- include ("../../partials/footer.ejs") %>
+<%- include ("../../partials/js.ejs") %>

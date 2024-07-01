@@ -8,9 +8,19 @@ const pajananController = require('../controller/pajananController')
 const faktorindividuController = require('../controller/faktorindividuController')
 const pajananluarkerjaController = require('../controller/pajananluarkerjaController')
 const hasildiagnosisController = require('../controller/hasildiagnosisController')
+const userController = require('../controller/userController')
+const dashboardController = require('../controller/dashboardController')
 
 const router = express.Router()
 
+router.get('/', userController.viewSignin)
+router.post('/', userController.actionSignin)
+router.get('/logout', userController.actionLogout)
+
+router.get('/dashboard', dashboardController.index)
+
+router.get('/pasien', pasienController.index)
+router.get('/pasien/:id', pasienController.detail)
 router.post('/pasien/signin', pasienController.signInByNik)
 router.post('/pasien/create', pasienController.create)
 router.post('/pasien/update', pasienController.update)

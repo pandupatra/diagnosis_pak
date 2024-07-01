@@ -1,0 +1,36 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 10px">No.</th>
+      <th>Nama</th>
+      <th>Jenis Kelamin</th>
+      <th>NIK</th>
+      <th>Tanggal lahir</th>
+      <th>Agama</th>
+      <th>Pekerjaan</th>
+      <th>Tahun masuk</th>
+      <th>Gol. darah</th>
+      <th>Tinggi badan(cm)</th>
+      <th>Berat badan(kg)</th>
+      <th>No. Telp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for(let i = 0; i < pasien.length; i++) { %>
+      <tr class="align-middle">
+        <td><%= i + 1 %></td>
+        <td><a href="/pasien/<%= pasien[i]._id %>"><%= pasien[i].nama %></a></td>
+        <td style="text-transform: capitalize;"><%= pasien[i].jenis_kelamin %></td>
+        <td><%= pasien[i].nik %></td>
+        <td><%= new Date(pasien[i].tanggal_lahir).toLocaleDateString() %></td>
+        <td><%= pasien[i].agama %></td>
+        <td><%= pasien[i].pekerjaan %></td>
+        <td><%= pasien[i].tahun_masuk %></td>
+        <td><%= pasien[i].golongan_darah %></td>
+        <td><%= pasien[i].tinggi_badan %></td>
+        <td><%= pasien[i].berat_badan %></td>
+        <td><%= pasien[i].no_telepon %></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
