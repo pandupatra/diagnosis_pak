@@ -13,7 +13,7 @@ const initValues = (hasildiagnosis) => {
   }
 }
 
-export default observer(function Hasildiagnosis({ onSubmit }) {
+export default observer(function Hasildiagnosis({ onSubmit, setShowResult }) {
   const store = useContext(StoreContext)
 
   const initialValues = useMemo(

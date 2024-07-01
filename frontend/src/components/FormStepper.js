@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useContext, useEffect, useState } from "react"
-import { Stepper, Step, StepContent, StepLabel, Box, StepButton, Typography, Button } from "@mui/material"
+import { Stepper, Step, StepContent, StepLabel, Box, StepButton, Typography, Button, Stack, Grid } from "@mui/material"
 import { card } from "@/styles/styles"
 import PasienForm from "./forms/PasienForm"
 import ChainForm from "./forms/ChainForm"
@@ -31,8 +31,7 @@ const steps = [
   "Pajanan kualitatif & kuantitatif",
   "Faktor Individu",
   "Pajanan luar tempat kerja",
-  "Hasil diagnosis",
-  "Hasil"
+  "Hasil diagnosis"
 ]
 
 const FormStepper = () => {
@@ -41,6 +40,7 @@ const FormStepper = () => {
 
   const [activeStep, setActiveStep] = useState(0)
   const [completed, setCompleted] = useState({});
+  const [showResult, setShowResult] = useState(false)
 
   const totalSteps = () => {
     return steps.length;
@@ -304,7 +304,7 @@ const FormStepper = () => {
         if (status !== 200) {
           return null
         }
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setShowResult(true)
       } catch (error) {
         console.error('Error submitting form:', error);
       }
@@ -344,11 +344,7 @@ const FormStepper = () => {
         )
       case 7:
         return (
-          <Hasildiagnosis onSubmit={onHasildiagnosisSubmit} />
-        )
-      case 8:
-        return (
-          <Hasil />
+          <Hasildiagnosis onSubmit={onHasildiagnosisSubmit} setShowResult={setShowResult} />
         )
     }
   }
@@ -357,22 +353,55 @@ const FormStepper = () => {
     <Box sx={{ width: "100%" }}>
       <Box marginBottom={3}>
         <Button variant="contained" onClick={() => router.push('/')}>Keluar</Button>
+        {showResult && (<Button variant="contained" sx={{ marginLeft: 2 }} onClick={() => setShowResult(false)}>Kembali ke form</Button>)}
       </Box>
-      <Stepper nonLinear className="mb-8" activeStep={activeStep}>
-        {steps.map((step, index) => (
-          <Step key={step} completed={completed[index]} disabled={index == 8}>
-            <StepButton onClick={handleStep(index)} />
-          </Step>
-        ))}
-      </Stepper>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      {showResult ?
+      <Box className="form-result" sx={{ display: "flex", justifyContent: "center" }}>
         <Box className="max-w-screen-sm w-full">
-          <Typography textAlign="center" variant="h4" gutterBottom>{steps[activeStep]}</Typography>
           <Box sx={card}>
-            {getStepContent(activeStep)}
+            <Stack spacing={2}>
+              <Grid container>
+                <Grid item xs={4}><Typography>Kesimpulan: </Typography></Grid>
+                <Grid item xs={8}><Typography>{store.hasildiagnosis.selected.kesimpulan}</Typography></Grid>
+              </Grid>
+
+              <Grid container>
+                <Grid item xs={4}><Typography>Hasil Diagnosis PAK: </Typography></Grid>
+                <Grid item xs={8}><Typography>{store.hasildiagnosis.selected.hasil_diagnosis_pak}</Typography></Grid>
+              </Grid>
+
+              <Grid container>
+                <Grid item xs={4}><Typography>Rekomendasi: </Typography></Grid>
+                <Grid item xs={8}><Typography>{store.hasildiagnosis.selected.rekomendasi}</Typography></Grid>
+              </Grid>
+
+              <Grid container>
+                <Grid item xs={4}><Typography>evaluasi: </Typography></Grid>
+                <Grid item xs={8}><Typography>{store.hasildiagnosis.selected.evaluasi}</Typography></Grid>
+              </Grid>
+            </Stack>
           </Box>
         </Box>
       </Box>
+      :
+      <Box className="form-stepper">
+        <Stepper nonLinear className="mb-8" activeStep={activeStep}>
+          {steps.map((step, index) => (
+            <Step key={step} completed={completed[index]} disabled={index == 8}>
+              <StepButton onClick={handleStep(index)} />
+            </Step>
+          ))}
+        </Stepper>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Box className="max-w-screen-sm w-full">
+            <Typography textAlign="center" variant="h4" gutterBottom>{steps[activeStep]}</Typography>
+            <Box sx={card}>
+              {getStepContent(activeStep)}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+      }
     </Box>
   )
 }
