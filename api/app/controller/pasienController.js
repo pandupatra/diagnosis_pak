@@ -6,7 +6,7 @@ const Gejala = require('../model/gejala');
 const Hasildiagnosis = require('../model/hasildiagnosis');
 const InputPajanan = require('../model/inputPajanan');
 const Pajanan = require('../model/pajanan');
-const Pajananluarkerja = require('../model/anamnesis');
+const Pajananluarkerja = require('../model/pajananluarkerja');
 const moment = require('moment')
 
 module.exports = {

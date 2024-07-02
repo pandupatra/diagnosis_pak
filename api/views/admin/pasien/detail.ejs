@@ -31,6 +31,7 @@
               <li><%= anamnesis?.gejala_tetanus.symptom[i] %></li>
             <% } %>
           </ul>
+          <p>Bobot : <%= anamnesis?.gejala_tetanus.weight %></p>
 
           <span>Gejala tuberkulosis :</span>
           <ul>
@@ -38,6 +39,7 @@
               <li><%= anamnesis?.gejala_tuberkulosis.symptom[i] %></li>
             <% } %>
           </ul>
+          <p>Bobot : <%= anamnesis?.gejala_tuberkulosis.weight %></p>
 
           <span>Gejala hepatitis :</span>
           <ul>
@@ -45,6 +47,7 @@
               <li><%= anamnesis?.gejala_hepatitis.symptom[i] %></li>
             <% } %>
           </ul>
+          <p>Bobot : <%= anamnesis?.gejala_hepatitis.weight %></p>
 
           <p>Pemeriksaan fisik : <%= anamnesis?.pemeriksaan_fisik %></p>
           <p>Tingkat pernapasan : <%= anamnesis?.pemeriksaan_fisik %></p>
@@ -61,6 +64,35 @@
           <p>Proses Kerja : <%= inputPajanan?.proses_kerja %></p>
           <p>Riwayat Kecelakaan Kerja : <%= inputPajanan?.riwayat_kecelakaan_kerja %></p>
           <p>APD : <%= inputPajanan?.apd %></p>
+
+          <h4><b>Hubungan anamnesis dan diagnosis klinis</b></h4>
+          <p>Waktu timbul gejala : <%= diagnosis?.waktu_timbul_gejala %></p>
+          <p>Pemeriksaan pra-kerja: <%= diagnosis?.pemeriksaan_prakerja %></p>
+          <p>Hasil diagnosis klinis : <%= diagnosis?.hasil_diagnosis_klinis %></p>
+
+          <h4><b>Pajanan kualitatif & kuantitatif</b></h4>
+          <p>Deskripsi lingkungan kerja : <%= pajanan?.deskripsi_lingkungan_kerja %></p>
+          <p>Lama kerja : <%= pajanan?.lama_kerja %></p>
+          <p>Masa kerja : <%= pajanan?.masa_kerja %></p>
+          <p>Data PLK : <%= pajanan?.data_plk %></p>
+          <p>Data monitoring biologis : <%= pajanan?.data_monitoring_biologis %></p>
+
+          <h4><b>Faktor Individu</b></h4>
+          <p>Kebiasaan : <%= faktorindividu?.kebiasaan %></p>
+          <p>Riwayat penyakit genetik : <%= faktorindividu?.riwayat_penyakit_genetik %></p>
+          <p>Riwayat atopi : <%= faktorindividu?.riwayat_atopi %></p>
+          <p>Penyakit penyerta : <%= faktorindividu?.penyakit_penyerta %></p>
+
+          <h4><b>Pajanan luar tempat kerja</b></h4>
+          <p>Pekerjaan rumah : <%= pajananluarkerja?.pekerjaan_rumah %></p>
+          <p>Hobi : <%= pajananluarkerja?.hobi %></p>
+          <p>Pekerjaan sampingan : <%= pajananluarkerja?.pekerjaan_sampingan %></p>
+
+          <h4><b>Hasil diagnosis</b></h4>
+          <p>Kesimpulan : <%= hasildiagnosis?.kesimpulan %></p>
+          <p>Hasil diagnosis PAK : <%= hasildiagnosis?.hasil_diagnosis_pak %></p>
+          <p>Rekomendasi : <%= hasildiagnosis?.rekomendasi %></p>
+          <p>Evaluasi : <%= hasildiagnosis?.evaluasi %></p>
         </div>
       </div> <!--end::Toast-->
     </div> <!--end::Container-->
