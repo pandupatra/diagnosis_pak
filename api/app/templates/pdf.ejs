@@ -2,11 +2,24 @@
 <html lang="en">
 <style>
   .container {
-    padding-top: 5%;
-    padding-bottom: 5%;
+    margin-top: 5%;
+    margin-bottom: 5%;
     padding-left: 5%;
     padding-right: 5%;
   }
+  .ttd {
+    position: absolute;
+    bottom: -100;
+    right: 5%;
+    text-align: center;
+    float: right;
+    padding: 1rem;
+    border: 1px solid black;
+    width: 150px;
+    height: 100px;
+  }
+  section { margin-top: 3rem; margin-bottom: 1rem; }
+  td, tr { padding: 1rem;}
   .tg  {border-collapse:collapse;border-spacing:0;}
   .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
   .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
@@ -16,301 +29,330 @@
     <h2 style="text-align: center;">HASIL PENEGAKAN DIAGNOSIS PENYAKIT AKIBAT KERJA HAZARD BIOLOGI</h2>
     <tr class="information">
       <td colspan="2">
-        <!-- Pasien table -->
-        <table>
-          <h4 style="font-weight: bold;">Data pasien</h4>
-          <tr>
-            <td style="width: 200px;">Nama</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.nama %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Jenis Kelamin</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.jenis_kelamin %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Tahun masuk</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.tahun_masuk %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">No. riwayat medis</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.no_riwayat_medis %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Golongan darah</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.golongan_darah %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Tinggi badan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.tinggi_badan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Berat badan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.berat_badan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">No. Telepon</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.no_telepon %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Alamat</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.alamat %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Agama</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.agama %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Pekerjaan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.pekerjaan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Tanggal lahir</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= _.formatDate(data.pasien?.tanggal_lahir, 'LL') %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">NIP</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.nip %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">NIK</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pasien?.nik %></td>
-          </tr>
-        </table>
-        <!-- Anamnesis table -->
-        <table class="tg">
-          <h4 style="font-weight: bold;">Anamnesis</h4>
-          <tr>
-            <th>#</th>
-            <th>Pertanyaan</th>
-            <th>Ya</th>
-            <th>Tidak</th>
-          </tr>
-          <% for(let i = 0; i < data.anamnesis?.questionData?.length; i++) { %>
+        <section style="height: 1vh;">
+          <!-- Pasien table -->
+          <table style="page-break-after: always;">
+            <h4 style="font-weight: bold;">Data pasien</h4>
             <tr>
-              <td><%= i + 1 %></td>
-              <td><%= data.anamnesis?.questionData[i]?.question %></td>
-              <td><%= data.anamnesis?.questionData[i]?.answer == "yes" ? "✓" : "" %></td>
-              <td><%= data.anamnesis?.questionData[i]?.answer == "no" ? "✓" : "" %></td>
+              <td style="width: 200px;">Nama</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.nama %></td>
             </tr>
-          <% } %>
-        </table>
-        <br>
-        <table>
-          <tr>
-            <td style="vertical-align: top; width: 200px;">Gejala <%= data.symptomWithMaxWeight.labelGejala %></td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td>
-              <ul>
-                <% for (let i = 0; i < data.symptomWithMaxWeight.symptom.length; i++) { %>
-                  <li><%= data.symptomWithMaxWeight.symptom[i] %></li>
-                <% } %>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Pemeriksaan fisik</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.anamnesis?.pemeriksaan_fisik %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Tingkat pernapasan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.anamnesis?.tingkat_pernapasan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Abdomen</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.anamnesis?.abdomen %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Tekanan darah</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.anamnesis?.tekanan_darah %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Pemeriksaan penunjang</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.anamnesis?.pemeriksaan_penunjang %></td>
-          </tr>
-        </table>
-        <!-- Input pajanan table -->
-        <table>
-          <h4 style="font-weight: bold;">Input pajanan</h4>
-          <tr>
-            <td style="width: 200px;">Deskripsi pekerjaan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.deskripsi_pekerjaan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Periode waktu</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.periode_waktu %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Pajanan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.pajanan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Produk</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.produk %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Bahan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.bahan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Cara kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.cara_kerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Proses kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.proses_kerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Riwayat kecelakaan kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.riwayat_kecelakaan_kerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">APD</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.inputpajanan?.apd %></td>
-          </tr>
-        </table>
-        <!-- Hubungan anamnesis dan diagnosis klinis -->
-        <table>
-          <h4 style="font-weight: bold;">Hubungan anamnesis dan diagnosis klinis</h4>
-          <tr>
-            <td style="width: 200px;">Waktu timbul gejala</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.diagnosis?.waktu_timbul_gejala %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Pemeriksaan pra-kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.diagnosis?.pemeriksaan_prakerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Hasil diagnosis klinis</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.diagnosis?.hasil_diagnosis_klinis %></td>
-          </tr>
-        </table>
-        <!-- Pajanan -->
-        <table>
-          <h4 style="font-weight: bold;">Pajanan kualitatif & kuantitatif</h4>
-          <tr>
-            <td style="width: 200px;">Deskripsi lingkungan kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajanan?.deskripsi_lingkungan_kerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Lama kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajanan?.lama_kerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Masa kerja</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajanan?.masa_kerja %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Data PLK</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajanan?.data_plk %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Data monitoring biologis</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajanan?.data_monitoring_biologis %></td>
-          </tr>
-        </table>
-        <!-- Faktor individu table -->
-        <table>
-          <h4 style="font-weight: bold;">Faktor individu</h4>
-          <tr>
-            <td style="width: 200px;">Kebiasaan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.faktorindividu?.kebiasaan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Riwayat penyakit genetik</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.faktorindividu?.riwayat_penyakit_genetik %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Riwayat atopi</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.faktorindividu?.riwayat_atopi %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Penyakit penyerta</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.faktorindividu?.penyakit_penyerta %></td>
-          </tr>
-        </table>
-        <!-- Pajanan luar tempat kerja table -->
-        <table>
-          <h4 style="font-weight: bold;">Pajanan luar tempat kerja</h4>
-          <tr>
-            <td style="width: 200px;">Pekerjaan rumah</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajananluarkerja?.pekerjaan_rumah %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Hobi</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajananluarkerja?.hobi %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Pekerjaan sampingan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.pajananluarkerja?.pekerjaan_sampingan %></td>
-          </tr>
-        </table>
-        <!-- Hasil diagnosis table -->
-        <table>
-          <h4 style="font-weight: bold;">Hasil diagnosis</h4>
-          <tr>
-            <td style="width: 200px;">Kesimpulan</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.hasildiagnosis?.kesimpulan %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Hasil diagnosis PAK</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.hasildiagnosis?.hasil_diagnosis_pak %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Rekomendasi</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.hasildiagnosis?.rekomendasi %></td>
-          </tr>
-          <tr>
-            <td style="width: 200px;">Evaluasi</td>
-            <td style="vertical-align: top; width: 2px;">:</td>
-            <td><%= data.hasildiagnosis?.evaluasi %></td>
-          </tr>
-        </table>
+            <tr>
+              <td style="width: 200px;">Jenis Kelamin</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.jenis_kelamin %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tahun masuk</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.tahun_masuk %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">No. riwayat medis</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.no_riwayat_medis %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Golongan darah</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.golongan_darah %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tinggi badan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.tinggi_badan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Berat badan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.berat_badan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">No. Telepon</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.no_telepon %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Alamat</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.alamat %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Agama</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.agama %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pekerjaan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.pekerjaan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tanggal lahir</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.tanggal_lahir && _.formatDate(data.pasien?.tanggal_lahir, 'LL') %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">NIP</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.nip %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">NIK</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.nik %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Skenario</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pasien?.skenario %></td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <!-- Anamnesis table -->
+          <table class="tg">
+            <h4 style="font-weight: bold;">Anamnesis</h4>
+            <% if (data.anamnesis?.questionData) { %>
+            <tr>
+              <th>#</th>
+              <th>Pertanyaan</th>
+              <th>Ya</th>
+              <th>Tidak</th>
+            </tr>
+            <% } %>
+            
+            <% for(let i = 0; i < data.anamnesis?.questionData?.length; i++) { %>
+              <tr>
+                <td><%= i + 1 %></td>
+                <td><%= data.anamnesis?.questionData[i]?.question %></td>
+                <td><%= data.anamnesis?.questionData[i]?.answer == "yes" ? "✓" : "" %></td>
+                <td><%= data.anamnesis?.questionData[i]?.answer == "no" ? "✓" : "" %></td>
+              </tr>
+            <% } %>
+            
+          </table>
+          <br>
+          <table style="page-break-after: always;">
+            <tr>
+              <td style="vertical-align: top; width: 200px;">Gejala <%= data.symptomWithMaxWeight?.labelGejala %></td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td>
+                <ul>
+                  <% for (let i = 0; i < data.symptomWithMaxWeight?.symptom?.length; i++) { %>
+                    <li><%= data.symptomWithMaxWeight?.symptom[i] %></li>
+                  <% } %>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pemeriksaan fisik</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.anamnesis?.pemeriksaan_fisik %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tingkat pernapasan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.anamnesis?.tingkat_pernapasan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Abdomen</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.anamnesis?.abdomen %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tekanan darah</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.anamnesis?.tekanan_darah %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pemeriksaan penunjang</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.anamnesis?.pemeriksaan_penunjang %></td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <!-- Input pajanan table -->
+          <table style="page-break-after: always;">
+            <h4 style="font-weight: bold;">Input pajanan</h4>
+            <tr>
+              <td style="width: 200px;">Deskripsi pekerjaan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.deskripsi_pekerjaan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Periode waktu</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.periode_waktu %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pajanan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.pajanan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Produk</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.produk %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Bahan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.bahan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Cara kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.cara_kerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Proses kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.proses_kerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Riwayat kecelakaan kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.riwayat_kecelakaan_kerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">APD</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.inputpajanan?.apd %></td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <!-- Hubungan anamnesis dan diagnosis klinis -->
+          <table style="page-break-after: always;">
+            <h4 style="font-weight: bold;">Hubungan anamnesis dan diagnosis klinis</h4>
+            <tr>
+              <td style="width: 200px;">Waktu timbul gejala</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.diagnosis?.waktu_timbul_gejala %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pemeriksaan pra-kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.diagnosis?.pemeriksaan_prakerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Hasil diagnosis klinis</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.diagnosis?.hasil_diagnosis_klinis %></td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <!-- Pajanan -->
+          <table style="page-break-after: always;">
+            <h4 style="font-weight: bold;">Pajanan kualitatif & kuantitatif</h4>
+            <tr>
+              <td style="width: 200px;">Deskripsi lingkungan kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajanan?.deskripsi_lingkungan_kerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Lama kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajanan?.lama_kerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Masa kerja</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajanan?.masa_kerja %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Data PLK</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajanan?.data_plk %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Data monitoring biologis</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajanan?.data_monitoring_biologis %></td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <!-- Faktor individu table -->
+          <table style="page-break-after: always;">
+            <h4 style="font-weight: bold;">Faktor individu</h4>
+            <tr>
+              <td style="width: 200px;">Kebiasaan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.faktorindividu?.kebiasaan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Riwayat penyakit genetik</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.faktorindividu?.riwayat_penyakit_genetik %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Riwayat atopi</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.faktorindividu?.riwayat_atopi %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Penyakit penyerta</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.faktorindividu?.penyakit_penyerta %></td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <!-- Pajanan luar tempat kerja table -->
+          <table style="page-break-after: always;">
+            <h4 style="font-weight: bold;">Pajanan luar tempat kerja</h4>
+            <tr>
+              <td style="width: 200px;">Pekerjaan rumah</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajananluarkerja?.pekerjaan_rumah %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Hobi</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajananluarkerja?.hobi %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pekerjaan sampingan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.pajananluarkerja?.pekerjaan_sampingan %></td>
+            </tr>
+          </table>
+        </section>
+        <section style="min-height:800px;">
+          <!-- Hasil diagnosis table -->
+          <table>
+            <h4 style="font-weight: bold;">Hasil diagnosis</h4>
+            <tr>
+              <td style="width: 200px;">Kesimpulan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.hasildiagnosis?.kesimpulan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Hasil diagnosis PAK</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.hasildiagnosis?.hasil_diagnosis_pak %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Rekomendasi</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.hasildiagnosis?.rekomendasi %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Evaluasi</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.hasildiagnosis?.evaluasi %></td>
+            </tr>
+          </table>
+        </section>
+        <div class="ttd">
+          <span style="bottom:0;text-align: center;vertical-align: bottom;">Dokter perusahaan</span>
+          <div style="position:absolute;bottom:30px;content:' ';left:50%;transform: translateX(-50%); width: 80%;height:1px;border-top: 1px dashed black;"></div>
+        </div>
       </td>
     </tr>
   </div>

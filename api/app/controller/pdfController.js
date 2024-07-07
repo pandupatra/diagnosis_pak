@@ -45,16 +45,19 @@ const getData = async (pasienId) => {
 
     let labelGejala;
     let objectWithMaxWeight;
-    let maxWeight = Math.max(anamnesis.gejala_tuberkulosis?.weight, anamnesis.gejala_hepatitis?.weight, anamnesis.gejala_tetanus?.weight);
-    if (maxWeight === anamnesis.gejala_tuberkulosis?.weight) {
-      objectWithMaxWeight = anamnesis.gejala_tuberkulosis;
+    let maxWeight = Math.max(anamnesis?.gejala_tuberkulosis?.weight, anamnesis?.gejala_hepatitis?.weight, anamnesis?.gejala_tetanus?.weight);
+    if (maxWeight === anamnesis?.gejala_tuberkulosis?.weight) {
+      objectWithMaxWeight = anamnesis?.gejala_tuberkulosis;
       labelGejala = "tuberkulosis"
-    } else if (maxWeight === anamnesis.gejala_tetanus?.weight) {
-      objectWithMaxWeight = anamnesis.gejala_tetanus;
+    } else if (maxWeight === anamnesis?.gejala_tetanus?.weight) {
+      objectWithMaxWeight = anamnesis?.gejala_tetanus;
       labelGejala = "tetanus"
-    } else {
-      objectWithMaxWeight = anamnesis.gejala_hepatitis;
+    } else if (maxWeight === anamnesis?.gejala_hepatitis?.weight) {
+      objectWithMaxWeight = anamnesis?.gejala_hepatitis;
       labelGejala = "hepatitis"
+    } else {
+      objectWithMaxWeight = null
+      labelGejala = ""
     }
     const symptomWithMaxWeight = { labelGejala, ...objectWithMaxWeight }
 
