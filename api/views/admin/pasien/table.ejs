@@ -13,6 +13,7 @@
       <th>Tinggi badan(cm)</th>
       <th>Berat badan(kg)</th>
       <th>No. Telp</th>
+      <th>Action</th>
     </tr>
   </thead>
   <tbody>
@@ -30,6 +31,14 @@
         <td><%= pasien[i].tinggi_badan %></td>
         <td><%= pasien[i].berat_badan %></td>
         <td><%= pasien[i].no_telepon %></td>
+        <td>
+          <form action="/pasien/delete/<%= pasien[i]._id %>?_method=DELETE" method="POST" style="display: inline-block;"> 
+            <button class="btn btn-danger btn-sm">
+              <i class="fas fa-trash"></i>
+              Hapus
+            </button>
+          </form>
+        </td>
       </tr>
     <% } %>
   </tbody>

@@ -10,6 +10,7 @@ const pajananluarkerjaController = require('../controller/pajananluarkerjaContro
 const hasildiagnosisController = require('../controller/hasildiagnosisController')
 const userController = require('../controller/userController')
 const dashboardController = require('../controller/dashboardController')
+const pdfController = require('../controller/pdfController')
 
 const router = express.Router()
 
@@ -24,6 +25,7 @@ router.get('/pasien/:id', pasienController.detail)
 router.post('/pasien/signin', pasienController.signInByNik)
 router.post('/pasien/create', pasienController.create)
 router.post('/pasien/update', pasienController.update)
+router.post('/pasien/delete/:id', pasienController.delete)
 
 router.post('/gejala/create', gejalaController.create)
 router.get('/gejala/:pasienId', gejalaController.get)
@@ -55,5 +57,7 @@ router.get('/pajananluarkerja/:pasienId', pajananluarkerjaController.get)
 router.post('/hasildiagnosis/create', hasildiagnosisController.create)
 router.post('/hasildiagnosis/update', hasildiagnosisController.update)
 router.get('/hasildiagnosis/:pasienId', hasildiagnosisController.get)
+
+router.get('/pdf/download', pdfController.index)
 
 module.exports = router;

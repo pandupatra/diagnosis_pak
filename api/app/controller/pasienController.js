@@ -33,6 +33,31 @@ module.exports = {
       
     }
   },
+  delete: async(req, res) => {
+    try {
+      const { id } = req.params
+
+      await Pasien.findOneAndDelete({ _id: id })
+      await Anamnesis.findOneAndDelete({ pasien: id })
+      await Diagnosis.findOneAndDelete({ pasien: id })
+      await Faktorindividu.findOneAndDelete({ pasien: id })
+      await Gejala.findOneAndDelete({ pasien: id })
+      await Hasildiagnosis.findOneAndDelete({ pasien: id })
+      await InputPajanan.findOneAndDelete({ pasien: id })
+      await Pajanan.findOneAndDelete({ pasien: id })
+      await Pajananluarkerja.findOneAndDelete({ pasien: id })
+
+      req.flash('alertMessage', "Berhasil hapus pasien")
+      req.flash('alertStatus', "success")
+
+      res.redirect('/pasien')
+
+    } catch (error) {
+      req.flash('alertMessage', `${err.message}`)
+      req.flash('alertStatus', 'danger')
+      res.redirect('/pasien')
+    }
+  },
   detail: async(req, res)=>{
     const { id } = req.params
     try {
@@ -122,7 +147,8 @@ module.exports = {
         pekerjaan,
         tanggal_lahir,
         nip,
-        nik
+        nik,
+        skenario
       } = req.body
 
       let pasien = await Pasien.findOneAndUpdate({
@@ -140,10 +166,13 @@ module.exports = {
         alamat,
         agama,
         pekerjaan,
-        tanggal_lahir: moment(tanggal_lahir, 'YYYY/MM/DD').format('YYYY-MM-DD[T]HH:mm:ss'),
+        tanggal_lahir: moment(tanggal_lahir, 'YYYY/MM/DD').add(1, "day").format('YYYY-MM-DD[T]HH:mm:ss'),
         nip,
-        nik
-      })
+        nik,
+        skenario
+      },
+      { new: true }
+      )
 
       await pasien.save()
 

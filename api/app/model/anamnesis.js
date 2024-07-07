@@ -5,6 +5,7 @@ const anamnesisSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Pasien"
   },
+  questionData: Array,
   pemeriksaan_fisik: String,
   tingkat_pernapasan: String,
   abdomen: String,

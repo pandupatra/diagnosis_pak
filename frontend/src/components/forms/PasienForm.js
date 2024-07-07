@@ -24,6 +24,7 @@ const initValues = (pasien) => {
     tanggal_lahir: pasien.tanggal_lahir ? new Date(pasien.tanggal_lahir).toISOString().slice(0, 10) : '',
     nip: pasien.nip || '',
     nik: pasien.nik || '',
+    skenario: pasien.skenario || ''
   }
 }
 
@@ -31,7 +32,7 @@ const PasienForm = ({ onSubmit }) => {
   const store = useContext(StoreContext)
   const initialValues = useMemo(
     () => initValues(store.pasien.selected),
-    [store]
+    [store.pasien]
   )
 
   return (
@@ -94,7 +95,7 @@ const PasienForm = ({ onSubmit }) => {
           <div>
             <label htmlFor="tinggi_badan" className='block text-sm font-medium leading-6 text-gray-900'>Tinggi badan (cm)</label>
             <div className="mt-2">
-              <Field type="number" id="tinggi_badan" name="tinggi_badan" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <Field type="number" min="0" id="tinggi_badan" name="tinggi_badan" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
             </div>
             <ErrorMessage className='block text-sm font-medium text-red-600' name="tinggi_badan" component="div" />
           </div>
@@ -102,7 +103,7 @@ const PasienForm = ({ onSubmit }) => {
           <div>
             <label htmlFor="berat_badan" className='block text-sm font-medium leading-6 text-gray-900'>Berat badan (kg)</label>
             <div className="mt-2">
-              <Field type="number" id="berat_badan" name="berat_badan" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <Field type="number" min="0" id="berat_badan" name="berat_badan" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
             </div>
             <ErrorMessage className='block text-sm font-medium text-red-600' name="berat_badan" component="div" />
           </div>
@@ -168,6 +169,14 @@ const PasienForm = ({ onSubmit }) => {
               <Field type="number" id="nik" name="nik" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
             </div>
             <ErrorMessage className='block text-sm font-medium text-red-600' name="nik" component="div" />
+          </div>
+          {/* Skenario */}
+          <div>
+            <label htmlFor="skenario" className='block w-full text-sm font-medium leading-6 text-gray-900'>Skenario</label>
+            <div className="mt-2">
+              <Field as="textarea" id="skenario" name="skenario" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            </div>
+            <ErrorMessage className='block text-sm font-medium text-red-600' name="skenario" component="div" />
           </div>
           <Button variant='contained' type='submit'>Submit</Button>
         </Form>

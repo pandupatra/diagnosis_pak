@@ -21,6 +21,18 @@ export default class Pasien {
     }
   }
 
+  *update(data) {
+    try {
+      const response = yield api.post('/pasien/update', data);
+      const pasien = response.data
+      this.setSelected(pasien)
+
+      return { status: 200, data: response.data };
+    } catch (error) {
+      return { status: error?.response?.status };
+    }
+  }
+
   *create(nik) {
     try {
       const response = yield api.post('/pasien/create', nik);

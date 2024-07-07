@@ -91,8 +91,12 @@ const FormStepper = () => {
   const onPasienSubmit = useCallback(
     async (pasien) => {
       try {
-        const response = await axios.post(`${API_ENDPOINT}/pasien/update`, pasien);
-        console.log('Response:', response.data);
+        const response = await store.pasien.update(pasien)
+        const { status, data } = await response
+        if (status !== 200) {
+          return null
+        }
+        console.log('Response:', data);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -312,6 +316,17 @@ const FormStepper = () => {
     [store.hasildiagnosis]
   )
 
+  const printHandler = useCallback(
+    async () => {
+      try {
+        let response = await axios.get(process.env.NEXT_PUBLIC_GATEWAY_URL + '/pdf/download')
+      } catch (error) {
+        
+      }
+    },
+    [store]
+  )
+
   const getStepContent = (step) => {
     switch (step) {
       case 0:
@@ -353,7 +368,12 @@ const FormStepper = () => {
     <Box sx={{ width: "100%" }}>
       <Box marginBottom={3}>
         <Button variant="contained" onClick={() => router.push('/')}>Keluar</Button>
-        {showResult && (<Button variant="contained" sx={{ marginLeft: 2 }} onClick={() => setShowResult(false)}>Kembali ke form</Button>)}
+        {showResult && (
+          <>
+          <Button variant="contained" sx={{ marginLeft: 2 }} onClick={() => setShowResult(false)}>Kembali ke form</Button>
+          <Button variant="contained" sx={{ marginLeft: 2 }} onClick={() => window.open(`${process.env.NEXT_PUBLIC_GATEWAY_URL}/pdf/download?pasienId=${store.pasien.selected._id}`, "_blank")}>Print</Button>
+          </>
+        )}
       </Box>
       {showResult ?
       <Box className="form-result" sx={{ display: "flex", justifyContent: "center" }}>

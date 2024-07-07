@@ -23,10 +23,12 @@ const AnamnesisForm = ({ onSubmit }) => {
 
   const onChainSubmit = async (values) => {
 
+    const questionData = [];
     const categorizedGejala = {};
     const categorizedWeights = {};
 
     questions.forEach((question, index) => {
+      questionData.push({question: question.question, answer: values[`question_${index}`]})
       if (values[`question_${index}`] === 'yes') {
         // If question used on more than one type
         if (Array.isArray(question.type)) {
@@ -56,6 +58,7 @@ const AnamnesisForm = ({ onSubmit }) => {
 
         if (question.follow_up) {
           question.follow_up.forEach((fu, fuIndex) => {
+            questionData.push({question: fu.question, answer: values[`question_${index}`]})
             if (values[`question_${index}_follow_up_${fuIndex}`] === 'yes') {
               if (Array.isArray(fu.type)) {
                 fu.type.forEach((type, tIndex) => {
@@ -90,6 +93,7 @@ const AnamnesisForm = ({ onSubmit }) => {
     try {
       let anamnesis = {
         pasien: store.pasien.selected._id,
+        questionData: questionData,
         gejala_tetanus: {
           symptom: categorizedGejala.tetanus,
           weight: categorizedWeights.tetanus,

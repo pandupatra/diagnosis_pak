@@ -6,7 +6,6 @@ const pasienSchema = new mongoose.Schema({
   },
   jenis_kelamin: {
     type: String,
-    enum: ['pria', 'wanita'],
   },
   tahun_masuk: {
     type: String,
@@ -44,6 +43,9 @@ const pasienSchema = new mongoose.Schema({
   nik: {
     type: Number,
     require: true
+  },
+  skenario: {
+    type: String
   }
 },
 {
