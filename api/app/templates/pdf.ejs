@@ -138,8 +138,10 @@
             <tr>
               <td style="vertical-align: top; width: 200px;">Gejala <%= data.symptomWithMaxWeight?.labelGejala %></td>
               <td style="vertical-align: top; width: 2px;">:</td>
+            </tr>
+            <tr>
               <td>
-                <ul>
+                <ul style="margin-top: 0;margin-bottom:0;">
                   <% for (let i = 0; i < data.symptomWithMaxWeight?.symptom?.length; i++) { %>
                     <li><%= data.symptomWithMaxWeight?.symptom[i] %></li>
                   <% } %>

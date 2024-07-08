@@ -11,7 +11,7 @@ export default class Anamnesis {
   setSelected = (anamnesis) => (this.selected = anamnesis);
 
   get isGejalaSubmitted() {
-    return !!this.selected.gejalaSubmitted;
+    return !!this.selected.questionData;
   }
 
   *fetch(pasienId) {

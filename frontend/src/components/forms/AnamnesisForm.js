@@ -145,7 +145,7 @@ const AnamnesisForm = ({ onSubmit }) => {
 
   return (
     <>
-    {store.anamnesis.isGejalaSubmitted ?
+    {store.anamnesis.selected.questionData ?
     <>
     {symptomWithMaxWeight && (
       <div className='mb-8'>
