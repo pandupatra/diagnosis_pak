@@ -95,16 +95,16 @@ const AnamnesisForm = ({ onSubmit }) => {
         pasien: store.pasien.selected._id,
         questionData: questionData,
         gejala_tetanus: {
-          symptom: categorizedGejala.tetanus,
-          weight: categorizedWeights.tetanus,
+          symptom: categorizedGejala.tetanus || [],
+          weight: categorizedWeights.tetanus || 0,
         },
         gejala_tuberkulosis: {
-          symptom: categorizedGejala.tuberkulosis,
-          weight: categorizedWeights.tuberkulosis,
+          symptom: categorizedGejala.tuberkulosis || [],
+          weight: categorizedWeights.tuberkulosis || 0,
         },
         gejala_hepatitis: {
-          symptom: categorizedGejala.hepatitis,
-          weight: categorizedWeights.hepatitis,
+          symptom: categorizedGejala.hepatitis || [],
+          weight: categorizedWeights.hepatitis || 0,
         },
         gejalaSubmitted: true
       }
@@ -127,6 +127,7 @@ const AnamnesisForm = ({ onSubmit }) => {
     () => {
       let labelGejala;
       let objectWithMaxWeight;
+      console.log(store.anamnesis.selected)
       let maxWeight = Math.max(store.anamnesis.selected?.gejala_tuberkulosis?.weight, store.anamnesis.selected?.gejala_hepatitis?.weight, store.anamnesis.selected?.gejala_tetanus?.weight);
       if (maxWeight === store.anamnesis.selected?.gejala_tuberkulosis?.weight) {
         objectWithMaxWeight = store.anamnesis.selected?.gejala_tuberkulosis;
@@ -149,6 +150,7 @@ const AnamnesisForm = ({ onSubmit }) => {
     <>
     {symptomWithMaxWeight && (
       <div className='mb-8'>
+        {console.log(symptomWithMaxWeight)}
         <div className='mb-2'>
           <label htmlFor="pemeriksaan_fisik" className='block text-sm font-medium leading-6 text-gray-900'>Gejala {symptomWithMaxWeight.labelGejala}: </label>
           <ul className='list-disc my-3 ml-5'>
