@@ -25,7 +25,7 @@ const API_ENDPOINT = process.env.NEXT_PUBLIC_GATEWAY_URL
 
 const steps = [
   "Data Pasien",
-  "Anamnesis",
+  "Diagnosis Klinis",
   "Input Pajanan",
   "Hubungan anamnesis dan diagnosis klinis",
   "Pajanan kualitatif & kuantitatif",
