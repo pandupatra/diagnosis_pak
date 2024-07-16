@@ -7,6 +7,7 @@ const hasildiagnosisSchema = mongoose.Schema({
   },
   kesimpulan: String,
   hasil_diagnosis_pak: String,
+  icd10: String,
   rekomendasi: String,
   evaluasi: String
 })

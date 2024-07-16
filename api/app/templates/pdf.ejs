@@ -112,7 +112,7 @@
         </section>
         <section>
           <!-- Anamnesis table -->
-          <table class="tg">
+          <table class="tg" style="page-break-after: always;">
             <h4 style="font-weight: bold;">Anamnesis</h4>
             <% if (data.anamnesis?.questionData) { %>
             <tr>
@@ -338,6 +338,11 @@
               <td style="width: 200px;">Hasil diagnosis PAK</td>
               <td style="vertical-align: top; width: 2px;">:</td>
               <td><%= data.hasildiagnosis?.hasil_diagnosis_pak %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">ICD-10</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= data.hasildiagnosis?.icd10 %></td>
             </tr>
             <tr>
               <td style="width: 200px;">Rekomendasi</td>
