@@ -27,7 +27,7 @@ const steps = [
   "Data Pasien",
   "Diagnosis Klinis",
   "Input Pajanan",
-  "Hubungan anamnesis dan diagnosis klinis",
+  "Hubungan pajanan dan diagnosis klinis",
   "Pajanan kualitatif & kuantitatif",
   "Faktor Individu",
   "Pajanan luar tempat kerja",
