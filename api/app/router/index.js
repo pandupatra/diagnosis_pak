@@ -59,5 +59,6 @@ router.post('/hasildiagnosis/update', hasildiagnosisController.update)
 router.get('/hasildiagnosis/:pasienId', hasildiagnosisController.get)
 
 router.get('/pdf/download', pdfController.index)
+router.get('/data_pasien/download', pdfController.data_pasien)
 
 module.exports = router;

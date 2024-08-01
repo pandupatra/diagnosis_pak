@@ -70,12 +70,6 @@ const getData = async (pasienId) => {
 module.exports = {
   index: async (req, res) => {
     const { pasienId } = req.query
-    const userData = { // for example
-      firstname: "linus",
-      lastname: "torvalds",
-      email: "foo@bar.com",
-      mob: "900-900-9000"
-    };
 
     const dataPromises = await getData(pasienId)
     console.log(dataPromises)
@@ -89,6 +83,40 @@ module.exports = {
 
     // Render the EJS template with user data
     const renderedHtml = ejs.render(html, { data: dataPromises, _: templatefunctions() });
+    await page.setContent(renderedHtml, { waitUntil: 'domcontentloaded' });
+
+    // Generate the PDF
+    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true, });
+
+    // Send the PDF as a response
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${pasienId}.pdf`);
+    res.send(pdfBuffer);
+
+    await browser.close();
+  },
+  data_pasien: async (req, res) => {
+    const { pasienId } = req.query
+    const userData = { // for example
+      firstname: "linus",
+      lastname: "torvalds",
+      email: "foo@bar.com",
+      mob: "900-900-9000"
+    };
+
+    const dataPromises = await getData(pasienId)
+    const pasienPromises = await Pasien.findOne({ _id: pasienId }).lean();
+    console.log(dataPromises)
+
+    const filePathName = path.resolve(__dirname, '../templates/data_pasien.ejs');
+    const html = fs.readFileSync(filePathName, 'utf8');
+
+    // Launch a new Chrome instance
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] });
+    const page = await browser.newPage();
+
+    // Render the EJS template with user data
+    const renderedHtml = ejs.render(html, { pasien: pasienPromises, _: templatefunctions() });
     await page.setContent(renderedHtml, { waitUntil: 'domcontentloaded' });
 
     // Generate the PDF

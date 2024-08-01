@@ -368,6 +368,9 @@ const FormStepper = () => {
     <Box sx={{ width: "100%" }}>
       <Box marginBottom={3}>
         <Button variant="contained" onClick={() => router.push('/')}>Keluar</Button>
+        {activeStep == 0 && (
+          <Button variant="contained" sx={{ marginLeft: 2 }} onClick={() => window.open(`${process.env.NEXT_PUBLIC_GATEWAY_URL}/data_pasien/download?pasienId=${store.pasien.selected._id}`, "_blank")}>Print</Button>
+        )}
         {showResult && (
           <>
           <Button variant="contained" sx={{ marginLeft: 2 }} onClick={() => setShowResult(false)}>Kembali ke form</Button>

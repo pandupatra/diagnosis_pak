@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+  .container {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  .ttd {
+    position: absolute;
+    bottom: -100;
+    right: 5%;
+    text-align: center;
+    float: right;
+    padding: 1rem;
+    border: 1px solid black;
+    width: 150px;
+    height: 100px;
+  }
+  section { margin-top: 3rem; margin-bottom: 1rem; }
+  td, tr { padding: 0.5rem;}
+  .tg  {border-collapse:collapse;border-spacing:0;}
+  .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+  .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+</style>
+<body>
+  <div class="container">
+    <h2 style="text-align: center;">HASIL PENEGAKAN DIAGNOSIS PENYAKIT AKIBAT KERJA HAZARD BIOLOGI</h2>
+    <tr class="information">
+      <td colspan="2">
+        <section style="min-height: 800px;">
+          <!-- Pasien table -->
+          <table>
+            <h4 style="font-weight: bold;">Data pasien</h4>
+            <tr>
+              <td style="width: 200px;">Nama</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.nama %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Jenis Kelamin</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.jenis_kelamin %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tahun masuk</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.tahun_masuk %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">No. riwayat medis</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.no_riwayat_medis %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Golongan darah</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.golongan_darah %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tinggi badan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.tinggi_badan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Berat badan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.berat_badan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">No. Telepon</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.no_telepon %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Alamat</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.alamat %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Agama</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.agama %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Pekerjaan</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.pekerjaan %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Tanggal lahir</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.tanggal_lahir && _.formatDate(pasien?.tanggal_lahir, 'LL') %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">NIP</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.nip %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">NIK</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.nik %></td>
+            </tr>
+            <tr>
+              <td style="width: 200px;">Skenario</td>
+              <td style="vertical-align: top; width: 2px;">:</td>
+              <td><%= pasien?.skenario %></td>
+            </tr>
+          </table>
+        </section>
+        <div class="ttd">
+          <span style="bottom:0;text-align: center;vertical-align: bottom;">Kepala Bengkel</span>
+          <div style="position:absolute;bottom:30px;content:' ';left:50%;transform: translateX(-50%); width: 80%;height:1px;border-top: 1px dashed black;"></div>
+        </div>
+      </td>
+    </tr>
+  </div>
+
+</body>
+
+</html>
